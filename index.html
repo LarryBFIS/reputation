@@ -1,258 +1,733 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GuestGraph · Reputation Intelligence by Buildd</title>
-<meta name="description" content="GuestGraph maps every review to the guest who wrote it, what they paid, and what they stayed in. Reputation intelligence for hotels — by Buildd From Ideas.">
-<link rel="stylesheet" href="assets/styles.css">
-<script>const BASE = './';</script>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hermitage Hotel — Buildd Reputation Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  .product-family-bar {
-    background: var(--navy-900);
-    color: var(--cream);
-    padding: 10px 0;
-    font-size: 12px;
-  }
-  .family-inner {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-  .family-products {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-  }
-  .family-product {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    opacity: 0.6;
-    font-family: var(--font-mono);
-    letter-spacing: 0.04em;
-    transition: opacity 0.2s;
-  }
-  .family-product:hover { opacity: 1; }
-  .family-product.current { opacity: 1; color: #FFE8B8; }
-  .family-product-dot {
-    width: 5px; height: 5px;
-    background: currentColor;
-    border-radius: 50%;
-  }
-  .graph-viz {
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    padding: 32px;
-    margin-top: 32px;
-    position: relative;
-    overflow: hidden;
-  }
-  .moat-quote {
-    font-family: var(--font-display);
-    font-size: 28px;
-    line-height: 1.3;
-    font-weight: 400;
-    color: var(--navy-900);
-    font-style: italic;
-    letter-spacing: -0.01em;
-    max-width: 720px;
-  }
+:root{--bg:#060a10;--s1:#0a0f18;--s2:#0d1422;--s3:#111a2e;--border:#1a2540;--cyan:#00f0b5;--blue:#4895ef;--purple:#7b2ff7;--amber:#f59e0b;--red:#ef4444;--pink:#ec4899;--text:#c8d6e5;--muted:#4a5568;--white:#f0f4f8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body.modal-open{overflow:hidden}
+
+.nav{padding:12px 40px;display:flex;align-items:center;gap:18px;background:rgba(6,10,16,0.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;backdrop-filter:blur(12px)}
+.nav-brand{font-size:13px;font-weight:700;color:var(--white);letter-spacing:0.5px;display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-brand-mark{width:18px;height:18px;background:var(--cyan);border-radius:3px;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:800}
+.nav-product{font-size:11px;color:var(--muted);padding-left:14px;border-left:1px solid var(--border);font-family:'JetBrains Mono',monospace}
+.nav-product b{color:var(--cyan);font-weight:600}
+.nav a{color:var(--muted);text-decoration:none;font-size:11px;font-weight:500;transition:color .2s}
+.nav a:hover,.nav a.active{color:var(--cyan)}
+.nav-links{margin-left:auto;display:flex;gap:18px;align-items:center}
+.nav-user{padding:5px 11px;border:1px solid var(--border);border-radius:5px;font-size:11px;color:var(--white);font-family:'JetBrains Mono',monospace}
+
+.live-pulse{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--cyan);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px}
+.live-pulse::before{content:'';width:6px;height:6px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.hero{padding:32px 40px 16px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.hero h1{font-size:28px;font-weight:700;color:var(--white);letter-spacing:-0.5px}
+.hero h1 .accent{color:var(--amber)}
+.hero-sub{font-size:12px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.hero-actions{display:flex;gap:8px}
+.btn{padding:8px 16px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--s1);color:var(--text);transition:all .2s;font-family:'Space Grotesk',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-primary{background:var(--cyan);color:#000;border-color:var(--cyan)}
+.btn-primary:hover{background:#00d4a0;color:#000;box-shadow:0 0 14px rgba(0,240,181,0.3)}
+
+.gm-score-card{margin:0 40px 16px;background:linear-gradient(135deg,rgba(123,47,247,0.12),rgba(0,240,181,0.06));border:1px solid rgba(123,47,247,0.3);border-radius:12px;padding:20px 24px;display:grid;grid-template-columns:auto 1fr auto auto;gap:24px;align-items:center;position:relative;overflow:hidden}
+.gm-score-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.score-ring{width:100px;height:100px;position:relative;display:flex;align-items:center;justify-content:center}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-bg{stroke:var(--s3);stroke-width:7;fill:none}
+.score-ring-fg{stroke:url(#gradient);stroke-width:7;fill:none;stroke-linecap:round;stroke-dasharray:264;stroke-dashoffset:170;filter:drop-shadow(0 0 8px rgba(0,240,181,0.5))}
+.score-num{position:absolute;font-size:28px;font-weight:700;color:var(--white);font-family:'JetBrains Mono',monospace;letter-spacing:-1px;text-align:center;line-height:1}
+.score-num small{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.gm-info-title{font-size:10px;color:var(--purple);font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.gm-name{font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px}
+.gm-stats-row{display:flex;gap:18px;font-size:11px;flex-wrap:wrap}
+.gm-stat-block{display:flex;flex-direction:column;gap:2px}
+.gm-stat-label{color:var(--muted);font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.gm-stat-val{color:var(--cyan);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px}
+.gm-stat-val.warn{color:var(--amber)}
+.gm-rank{text-align:center;padding:0 20px;border-left:1px solid var(--border)}
+.gm-rank-num{font-size:34px;font-weight:700;color:var(--amber);font-family:'JetBrains Mono',monospace;line-height:1;text-shadow:0 0 14px rgba(245,158,11,0.3)}
+.gm-rank-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;font-weight:600}
+.gm-bonus{text-align:center;padding:0 20px;border-left:1px solid var(--border)}
+.gm-bonus-num{font-size:18px;font-weight:700;color:var(--purple);font-family:'JetBrains Mono',monospace;line-height:1.1}
+.gm-bonus-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;font-weight:600}
+.gm-bonus-sub{font-size:9px;color:var(--text);margin-top:4px;font-family:'JetBrains Mono',monospace}
+
+.alert-bar{margin:0 40px 16px;background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.04));border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.alert-content{display:flex;align-items:center;gap:14px}
+.alert-icon{width:32px;height:32px;background:rgba(239,68,68,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.alert-title{font-size:12px;font-weight:600;color:var(--red)}
+.alert-sub{font-size:10px;color:var(--text);margin-top:2px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:0 40px 24px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.stat-card:hover{border-color:var(--cyan);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,240,181,0.12)}
+.stat-card.featured{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(239,68,68,0.04));border-color:rgba(245,158,11,0.3)}
+.stat-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--red))}
+.stat-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.stat-val{font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--white);line-height:1}
+.stat-val.cyan{color:var(--cyan)}
+.stat-val.amber{color:var(--amber)}
+.stat-val.red{color:var(--red)}
+.stat-delta{font-size:10px;color:var(--cyan);font-family:'JetBrains Mono',monospace;margin-top:6px;display:flex;align-items:center;gap:4px}
+.stat-delta.down{color:var(--red)}
+
+.three-actions{padding:8px 40px 24px}
+.actions-hdr{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.actions-hdr::before{content:'';width:24px;height:1px;background:var(--cyan)}
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.action-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:300px}
+.action-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,240,181,0.1)}
+.action-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);opacity:0.7;transition:all .3s}
+.action-card:hover::before{opacity:1;height:4px;box-shadow:0 0 18px var(--accent)}
+.action-1{--accent:var(--blue)}
+.action-1:hover{border-color:var(--blue)}
+.action-2{--accent:var(--purple)}
+.action-2:hover{border-color:var(--purple)}
+.action-3{--accent:var(--cyan)}
+.action-3:hover{border-color:var(--cyan)}
+.action-num{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;letter-spacing:1.5px}
+.action-title{font-size:20px;font-weight:700;color:var(--white);margin-top:8px;margin-bottom:6px;letter-spacing:-0.3px}
+.action-tag{font-size:10px;color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600;margin-bottom:14px;letter-spacing:0.5px}
+.action-desc{font-size:11px;color:var(--text);line-height:1.65;margin-bottom:14px;flex:1}
+.action-stats{display:flex;gap:16px;padding-top:14px;border-top:1px solid var(--border);margin-bottom:14px}
+.action-stat-num{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--white);line-height:1}
+.action-stat-lbl{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:3px;font-weight:600}
+.action-cta{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:6px;font-size:11px;font-weight:600;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;transition:all .2s}
+.action-card:hover .action-cta{background:rgba(0,240,181,0.06)}
+.action-arrow{font-size:14px;transition:transform .2s}
+.action-card:hover .action-arrow{transform:translateX(3px)}
+
+.sub-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sub-btn{padding:12px 12px;background:rgba(123,47,247,0.06);border:1px solid rgba(123,47,247,0.2);border-radius:8px;font-size:11px;color:var(--text);cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;text-decoration:none}
+.sub-btn:hover{border-color:var(--purple);background:rgba(123,47,247,0.12);transform:translateY(-1px)}
+.sub-btn-title{font-size:11px;font-weight:700;color:var(--white);line-height:1.3}
+.sub-btn-meta{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--purple);font-weight:600;letter-spacing:0.5px}
+.sub-btn-count{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--purple);margin-bottom:4px;line-height:1}
+
+.section{padding:8px 40px 24px}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:14px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:3px;height:14px;background:var(--cyan);border-radius:2px}
+.section-meta{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+.split{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;padding:0 40px 24px}
+.live-feed{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.feed-hdr{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--s2)}
+.feed-title{font-size:11px;font-weight:700;color:var(--white);letter-spacing:0.5px}
+.feed-item{padding:14px 18px;border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer;position:relative}
+.feed-item:hover{background:var(--s2)}
+.feed-item:last-child{border-bottom:none}
+.feed-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+.feed-platform{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.feed-time{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.feed-author{font-size:12px;color:var(--white);font-weight:600;margin-bottom:6px}
+.feed-author .rating{font-family:'JetBrains Mono',monospace;font-weight:700;margin-left:6px;color:var(--cyan)}
+.feed-author .rating.low{color:var(--amber)}
+.feed-author .rating.bad{color:var(--red)}
+.feed-text{font-size:11px;color:var(--text);line-height:1.6;font-style:italic;margin-bottom:8px}
+.feed-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:8px;padding:2px 7px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+.tag-cyan{background:rgba(0,240,181,0.12);color:var(--cyan)}
+.tag-blue{background:rgba(72,149,239,0.12);color:var(--blue)}
+.tag-amber{background:rgba(245,158,11,0.15);color:var(--amber)}
+.tag-red{background:rgba(239,68,68,0.15);color:var(--red)}
+.tag-purple{background:rgba(123,47,247,0.15);color:var(--purple)}
+.feed-status{font-size:10px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.feed-status.posted{color:var(--cyan)}
+.feed-status.pending{color:var(--amber)}
+.feed-status.escalated{color:var(--red)}
+.feed-status::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 4px currentColor}
+
+.right-stack{display:flex;flex-direction:column;gap:12px}
+.platform-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.platform-row{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;transition:background .2s;cursor:pointer}
+.platform-row:hover{background:var(--s2)}
+.platform-row:last-child{border-bottom:none}
+.platform-name{color:var(--text);font-weight:500}
+.platform-num{font-family:'JetBrains Mono',monospace;font-weight:600}
+.platform-num .rating{color:var(--cyan)}
+.platform-num .count{color:var(--muted);font-size:10px;margin-left:8px}
+
+.theme-row{display:flex;align-items:center;gap:10px;padding:6px 16px;font-size:11px}
+.theme-name{width:100px;color:var(--text);text-transform:capitalize;flex-shrink:0;font-size:11px}
+.theme-bar-wrap{flex:1;height:14px;background:var(--s3);border-radius:3px;overflow:hidden}
+.theme-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:3px}
+.theme-count{font-family:'JetBrains Mono',monospace;color:var(--white);font-weight:700;font-size:11px;min-width:30px;text-align:right}
+
+.findings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 40px 24px}
+.finding-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;text-decoration:none;color:inherit;display:block}
+.finding-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 20px rgba(0,240,181,0.08)}
+.finding-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.finding-card.f-red{--accent:var(--red)}
+.finding-card.f-amber{--accent:var(--amber)}
+.finding-card.f-cyan{--accent:var(--cyan)}
+.finding-card.f-blue{--accent:var(--blue)}
+.finding-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.finding-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px;line-height:1.3}
+.finding-desc{font-size:11px;color:var(--text);line-height:1.6;margin-bottom:12px}
+.finding-cta{font-size:10px;color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600;display:flex;align-items:center;gap:4px;line-height:1.5}
+.finding-impact{position:absolute;top:14px;right:14px;text-align:right}
+.finding-impact-val{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent);line-height:1}
+.finding-impact-lbl{font-size:8px;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-top:2px;max-width:140px;line-height:1.3}
+
+.chart-container{margin:0 40px 24px;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:20px}
+.chart-title{font-size:12px;font-weight:700;color:var(--white);margin-bottom:14px;letter-spacing:0.5px}
+
+.ingestion-strip{margin:0 40px 16px;background:linear-gradient(135deg,rgba(0,240,181,0.06),rgba(123,47,247,0.04));border:1px solid rgba(0,240,181,0.2);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ingestion-info{display:flex;align-items:center;gap:14px;font-size:11px}
+.ing-icon{width:32px;height:32px;background:rgba(0,240,181,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:14px;font-weight:700}
+.ing-stats{display:flex;gap:18px;font-family:'JetBrains Mono',monospace}
+.ing-stat{display:flex;flex-direction:column;gap:2px}
+.ing-stat-num{color:var(--cyan);font-weight:700;font-size:13px}
+.ing-stat-lbl{color:var(--muted);font-size:9px;letter-spacing:0.5px;text-transform:uppercase}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:999;display:none;opacity:0;transition:opacity .25s;padding:30px 20px;overflow-y:auto}
+.modal-backdrop.show{display:flex;opacity:1;align-items:flex-start;justify-content:center}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:12px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn .25s ease-out}
+@keyframes modalIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.modal-hdr{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:14px;font-weight:700;color:var(--white)}
+.modal-close{cursor:pointer;color:var(--muted);font-size:20px;background:none;border:none;line-height:1}
+.modal-close:hover{color:var(--white)}
+.modal-body{padding:20px 24px}
+.modal-tabs{display:flex;gap:6px;padding:14px 24px 0;border-bottom:1px solid var(--border)}
+.modal-tab{padding:9px 16px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.modal-tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.modal-tab:hover{color:var(--text)}
+
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:32px 20px;text-align:center;background:var(--s2);cursor:pointer;transition:all .2s;margin-bottom:16px}
+.upload-area:hover{border-color:var(--cyan);background:rgba(0,240,181,0.04)}
+.upload-icon{width:44px;height:44px;background:var(--s3);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--cyan);font-size:18px;font-weight:700;margin-bottom:10px}
+.paste-area{width:100%;min-height:160px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;resize:vertical;font:inherit}
+.paste-area:focus{border-color:var(--cyan);outline:none}
+.parse-result{background:var(--s2);border:1px solid var(--cyan);border-radius:8px;padding:14px;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;display:none}
+.parse-result.show{display:block;animation:fadeIn .25s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:32px}
+.footer-products{display:flex;gap:14px}
+.footer-product{padding:3px 8px;border:1px solid var(--border);border-radius:4px;color:var(--muted);text-decoration:none;transition:all .2s}
+.footer-product:hover{border-color:var(--cyan);color:var(--cyan)}
+.footer-product.current{border-color:var(--cyan);color:var(--cyan);background:rgba(0,240,181,0.06)}
+
+@media (max-width:900px){
+  .actions-grid,.split,.stats,.findings-grid{grid-template-columns:1fr}
+  .gm-score-card{grid-template-columns:1fr;text-align:center}
+  .nav,.hero,.section,.stats,.three-actions,.split,.alert-bar,.findings-grid,.footer,.gm-score-card,.chart-container,.ingestion-strip{padding-left:20px;padding-right:20px}
+  .gm-score-card,.alert-bar,.chart-container,.ingestion-strip{margin:0 20px 16px}
+  .nav-product,.nav-links a:not(.nav-user){display:none}
+}
 </style>
 </head>
-<body data-page="home">
+<body>
 
-<div class="product-family-bar">
-  <div class="family-inner">
-    <div class="family-products">
-      <span class="family-product"><span class="family-product-dot"></span>PriceCortex</span>
-      <span class="family-product current"><span class="family-product-dot"></span>GuestGraph</span>
-      <span class="family-product"><span class="family-product-dot"></span>FolioLens</span>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7b2ff7"/><stop offset="100%" stop-color="#00f0b5"/></linearGradient></defs></svg>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-brand"><span class="nav-brand-mark">B</span>BUILDD</a>
+  <span class="nav-product">REPUTATION <b>v1.0</b></span>
+  <div class="nav-links">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="actions.html">Analytics</a>
+    <a href="reviews.html">Replies</a>
+    <a href="revenue.html">Revenue</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <span class="nav-user">HERMITAGE GM</span>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <span class="live-pulse">LIVE · 625 REVIEWS · 7 PLATFORMS</span>
+    <h1 style="margin-top:8px">Hermitage Hotel — <span class="accent">4.6</span><span style="font-size:18px;color:var(--muted)">/10 composite</span></h1>
+    <div class="hero-sub">437 negative reviews · 32.6% reply rate · cleanliness #1 issue across all platforms</div>
+  </div>
+  <div class="hero-actions">
+    <button class="btn" onclick="openIngestModal()">+ Add Reviews</button>
+    <a href="report.html" class="btn">Export PDF</a>
+    <a href="chatbot.html" class="btn btn-primary">Ask Rev Mgr ↗</a>
+  </div>
+</section>
+
+<div class="ingestion-strip">
+  <div class="ingestion-info">
+    <div class="ing-icon">↓</div>
+    <div>
+      <div style="font-weight:600;color:var(--cyan);font-size:12px">Last data sync: 14 minutes ago</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px">CSV uploads + Google paste · processed by junior team</div>
     </div>
-    <div style="opacity: 0.7; font-family: var(--font-mono);">The Buildd From Ideas family · 3 products, 1 mission</div>
+  </div>
+  <div class="ing-stats">
+    <div class="ing-stat"><span class="ing-stat-num">319</span><span class="ing-stat-lbl">Booking</span></div>
+    <div class="ing-stat"><span class="ing-stat-num">75</span><span class="ing-stat-lbl">Google</span></div>
+    <div class="ing-stat"><span class="ing-stat-num">118</span><span class="ing-stat-lbl">Expedia</span></div>
+    <div class="ing-stat"><span class="ing-stat-num">108</span><span class="ing-stat-lbl">Hotels</span></div>
+  </div>
+  <button class="btn btn-primary" onclick="openIngestModal()">Paste/upload now ↗</button>
+</div>
+
+<div class="gm-score-card">
+  <div class="score-ring">
+    <svg width="100" height="100"><circle class="score-ring-bg" cx="50" cy="50" r="42"/><circle class="score-ring-fg" cx="50" cy="50" r="42"/></svg>
+    <div class="score-num">385<small>/1000</small></div>
+  </div>
+  <div>
+    <div class="gm-info-title">GM PERFORMANCE SCORE · LIVE</div>
+    <div class="gm-name">Hermitage Hotel — needs major intervention</div>
+    <div class="gm-stats-row">
+      <div class="gm-stat-block"><span class="gm-stat-label">Rating</span><span class="gm-stat-val warn">+98</span></div>
+      <div class="gm-stat-block"><span class="gm-stat-label">Response</span><span class="gm-stat-val warn">+112</span></div>
+      <div class="gm-stat-block"><span class="gm-stat-label">Recoveries</span><span class="gm-stat-val warn">+82</span></div>
+      <div class="gm-stat-block"><span class="gm-stat-label">Revenue</span><span class="gm-stat-val warn">+93</span></div>
+    </div>
+  </div>
+  <div class="gm-rank">
+    <div class="gm-rank-num">#14</div>
+    <div class="gm-rank-lbl">of 14 GMs</div>
+  </div>
+  <div class="gm-bonus">
+    <div class="gm-bonus-num">$0</div>
+    <div class="gm-bonus-lbl">Bonus YTD</div>
+    <div class="gm-bonus-sub">$1,200 to next tier</div>
   </div>
 </div>
 
-<div id="site-nav"></div>
+<div class="alert-bar">
+  <div class="alert-content">
+    <div class="alert-icon">!</div>
+    <div>
+      <div class="alert-title">Critical: 274 high-risk reviews need GM action</div>
+      <div class="alert-sub">Cleanliness pattern locked across Booking + Google + Expedia · est $22K/mo at risk</div>
+    </div>
+  </div>
+  <a href="actions.html" class="btn">Open analytics ↗</a>
+</div>
 
-<main>
-  <section class="hero">
-    <div class="container">
-      <div class="hero-pretitle">
-        <span class="eyebrow">GuestGraph · Reputation × Revenue intelligence</span>
+<div class="stats">
+  <div class="stat-card featured">
+    <div class="stat-lbl">Composite Rating</div>
+    <div class="stat-val amber">4.6</div>
+    <div class="stat-delta">↑ 1.28 vs 2024 trough</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Total Reviews</div>
+    <div class="stat-val">625</div>
+    <div class="stat-delta">7 platforms · multi-year</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Reply Rate</div>
+    <div class="stat-val red">32.6%</div>
+    <div class="stat-delta down">0% on Google + Expedia + Hotels</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Negative Reviews</div>
+    <div class="stat-val red">437</div>
+    <div class="stat-delta down">69.9% of all</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-lbl">Tier 3 Critical</div>
+    <div class="stat-val red">274</div>
+    <div class="stat-delta down">GM action required</div>
+  </div>
+</div>
+
+<div class="three-actions">
+  <div class="actions-hdr">Three core modules · click to enter</div>
+  <div class="actions-grid">
+
+    <a href="actions.html" class="action-card action-1">
+      <div class="action-num">MODULE 01</div>
+      <div class="action-title">Rating Analytics</div>
+      <div class="action-tag">CAUSAL ENGINE · CAUSE → ACTION</div>
+      <div class="action-desc">437 negative reviews tagged across 7 platforms. Cleanliness mentioned in 98 of them. Bathroom in 74. Patterns locked into action items.</div>
+      <div class="action-stats">
+        <div><div class="action-stat-num">4</div><div class="action-stat-lbl">Findings</div></div>
+        <div><div class="action-stat-num">$47K</div><div class="action-stat-lbl">At Risk</div></div>
+        <div><div class="action-stat-num">98</div><div class="action-stat-lbl">Cleanliness Hits</div></div>
       </div>
-      <h1 class="display-xl mb-6" style="max-width: 940px;">
-        Every review, mapped to the <span class="italic">guest</span> who wrote it, what they <span class="italic">paid</span>, and what they <span class="italic">stayed in</span>.
-      </h1>
-      <p style="font-size: 19px; color: var(--ink-soft); max-width: 720px; margin-bottom: 32px;">
-        Medallia gives you a list of reviews. GuestGraph gives you the graph that connects them — to stays, rates, rooms, staff, tickets, and revenue. So your replies sound human, your operations get sharper, and your owner finally knows what reputation is <em>worth</em>.
-      </p>
-      <div class="flex gap-3">
-        <a href="pages/dashboard.html" class="btn btn-primary">View live demo →</a>
-        <a href="#how" class="btn btn-secondary">How it works</a>
+      <div class="action-cta">OPEN ANALYTICS<span class="action-arrow">↗</span></div>
+    </a>
+
+    <a href="reviews.html" class="action-card action-2">
+      <div class="action-num">MODULE 02</div>
+      <div class="action-title">Review Replies</div>
+      <div class="action-tag">7 PLATFORMS · TIERED APPROVAL</div>
+      <div class="action-desc">625 reviews ingested. Buildd auto-drafts every reply in your voice. Two paths:</div>
+
+      <div class="sub-buttons">
+        <a href="reviews.html?tier=ai" class="sub-btn">
+          <div class="sub-btn-count">185</div>
+          <div class="sub-btn-title">AI Self-Generated</div>
+          <div class="sub-btn-meta">AUTO-POST · LOW RISK</div>
+        </a>
+        <a href="reviews.html?tier=gm" class="sub-btn">
+          <div class="sub-btn-count">440</div>
+          <div class="sub-btn-title">GM Intervention</div>
+          <div class="sub-btn-meta">REVIEW REQUIRED</div>
+        </a>
+      </div>
+
+      <div class="action-cta">OPEN REPLY QUEUE<span class="action-arrow">↗</span></div>
+    </a>
+
+    <a href="revenue.html" class="action-card action-3">
+      <div class="action-num">MODULE 03</div>
+      <div class="action-title">Revenue Tools</div>
+      <div class="action-tag">PRICECORTEX SYNC · GM SCORE</div>
+      <div class="action-desc">Pricing recommendations from compset. Cleanliness fix could drive +1.5 rating points = ~$28K annual revenue lift. GM leaderboard with bonus tiers — gamify the work.</div>
+      <div class="action-stats">
+        <div><div class="action-stat-num">$28K</div><div class="action-stat-lbl">Lift Potential</div></div>
+        <div><div class="action-stat-num">#14</div><div class="action-stat-lbl">Current Rank</div></div>
+        <div><div class="action-stat-num">385</div><div class="action-stat-lbl">GM Score</div></div>
+      </div>
+      <div class="action-cta">OPEN REVENUE TOOLS<span class="action-arrow">↗</span></div>
+    </a>
+
+  </div>
+</div>
+
+<div class="chart-container">
+  <div class="chart-title">RATING TREND · MONTHLY AVG · LAST 24 MONTHS</div>
+  <canvas id="trendChart" height="80"></canvas>
+</div>
+
+<div class="split">
+  <div class="live-feed">
+    <div class="feed-hdr">
+      <div class="feed-title">LIVE REVIEWS · MOST RECENT</div>
+      <span class="live-pulse">REAL-TIME</span>
+    </div>
+    
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">BOOKING · 2026-04-27</span>
+        <span class="feed-time">YESTERDAY</span>
+      </div>
+      <div class="feed-author">Nathan <span class="rating low">6.0</span></div>
+      <div class="feed-text">"Location The staff"</div>
+      <div class="feed-meta"><span class="tag tag-amber">Tier 2 · GM intervention</span><span class="tag tag-blue">staff</span></div>
+      <div class="feed-status posted">REPLIED</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">HOTELS · 2026-04-26</span>
+        <span class="feed-time">2 DAYS AGO</span>
+      </div>
+      <div class="feed-author">Matthew DeCesar <span class="rating bad">2.0</span></div>
+      <div class="feed-text">"Had a horrible time, had to go to a whole different hotel. The hallways gave super creepy vibes, there was graffiti on most of the walls, not that I mind graffiti just y'know wasn'..."</div>
+      <div class="feed-meta"><span class="tag tag-red">Tier 3 · GM only</span><span class="tag tag-red">safety</span><span class="tag tag-amber">maintenance</span></div>
+      <div class="feed-status escalated">ESCALATED · GM action required</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">BOOKING · 2026-04-25</span>
+        <span class="feed-time">3 DAYS AGO</span>
+      </div>
+      <div class="feed-author">Cheryl <span class="rating bad">1.0</span></div>
+      <div class="feed-text">"Location Dirty, unpleasant staff, burn holes in bedding, makeup stains on pillow, broken elevators, broken sprinkler heads,locked fire exitsâ¦."</div>
+      <div class="feed-meta"><span class="tag tag-red">Tier 3 · GM only</span><span class="tag tag-red">cleanliness</span><span class="tag tag-amber">maintenance</span></div>
+      <div class="feed-status posted">REPLIED</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">EXPEDIA · 2026-04-25</span>
+        <span class="feed-time">3 DAYS AGO</span>
+      </div>
+      <div class="feed-author">Zane Schietinger <span class="rating low">4.0</span></div>
+      <div class="feed-text">"There were stains on the mattresses,  burns on the sheets and comforter, crumbs all over the place, a layer of dust on the hairdryer, and eveything was just generally worn. It was ..."</div>
+      <div class="feed-meta"><span class="tag tag-amber">Tier 2 · GM intervention</span><span class="tag tag-red">cleanliness</span><span class="tag tag-amber">maintenance</span></div>
+      <div class="feed-status pending">PENDING · awaiting reply</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">HOTELS · 2026-04-25</span>
+        <span class="feed-time">3 DAYS AGO</span>
+      </div>
+      <div class="feed-author">Patrilla <span class="rating low">6.0</span></div>
+      <div class="feed-text">"There was no breakfast, and the staff didn't really do their job very well at all. There was no Wi-Fi there was no what I saw on the ammunition"</div>
+      <div class="feed-meta"><span class="tag tag-amber">Tier 2 · GM intervention</span><span class="tag tag-blue">staff</span><span class="tag tag-blue">breakfast</span></div>
+      <div class="feed-status pending">PENDING · awaiting reply</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">EXPEDIA · 2026-04-24</span>
+        <span class="feed-time">4 DAYS AGO</span>
+      </div>
+      <div class="feed-author">Aden Buettner <span class="rating low">4.0</span></div>
+      <div class="feed-text">"Requested a non-smoking room and received a smoking room. The elevators did not work and was on the 3rd floor. If you need to extend do it via Expedia they have much higher in hous..."</div>
+      <div class="feed-meta"><span class="tag tag-amber">Tier 2 · GM intervention</span><span class="tag tag-red">cleanliness</span></div>
+      <div class="feed-status pending">PENDING · awaiting reply</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">HOTELS · 2026-04-24</span>
+        <span class="feed-time">4 DAYS AGO</span>
+      </div>
+      <div class="feed-author">Paola Cuevas <span class="rating bad">2.0</span></div>
+      <div class="feed-text">"First thing there you notice is the stench of smoke. Every place you looked, it was some sort of barricade and something not working. The smell was the same as you entered the room..."</div>
+      <div class="feed-meta"><span class="tag tag-red">Tier 3 · GM only</span><span class="tag tag-red">cleanliness</span><span class="tag tag-amber">bathroom</span></div>
+      <div class="feed-status escalated">ESCALATED · GM action required</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-row">
+        <span class="feed-platform">EXPEDIA · 2026-04-24</span>
+        <span class="feed-time">4 DAYS AGO</span>
+      </div>
+      <div class="feed-author">kari lasanta <span class="rating ">8.0</span></div>
+      <div class="feed-text">"Ok"</div>
+      <div class="feed-meta"><span class="tag tag-cyan">Tier 1 · auto-post</span></div>
+      <div class="feed-status pending">PENDING · awaiting reply</div>
+    </div>
+  </div>
+
+  <div class="right-stack">
+    <div class="platform-card">
+      <div class="feed-hdr"><div class="feed-title">BY PLATFORM</div></div>
+      <div class="platform-row"><span class="platform-name">Booking</span><span class="platform-num"><span class="rating">3.82</span><span class="count">319 · 64% replied</span></span></div><div class="platform-row"><span class="platform-name">Google</span><span class="platform-num"><span class="rating">6.19</span><span class="count">75 · 0% replied</span></span></div><div class="platform-row"><span class="platform-name">Expedia</span><span class="platform-num"><span class="rating">5.29</span><span class="count">118 · 0% replied</span></span></div><div class="platform-row"><span class="platform-name">Hotels</span><span class="platform-num"><span class="rating">5.09</span><span class="count">108 · 0% replied</span></span></div><div class="platform-row"><span class="platform-name">Travelocity</span><span class="platform-num"><span class="rating">2.67</span><span class="count">3 · 0% replied</span></span></div><div class="platform-row"><span class="platform-name">Orbitz</span><span class="platform-num"><span class="rating">2.0</span><span class="count">1 · 0% replied</span></span></div><div class="platform-row"><span class="platform-name">CheapTickets</span><span class="platform-num"><span class="rating">6.0</span><span class="count">1 · 0% replied</span></span></div>
+    </div>
+
+    <div class="platform-card">
+      <div class="feed-hdr"><div class="feed-title">TOP COMPLAINT THEMES</div></div>
+      <div style="padding:10px 0">
+        
+    <div class="theme-row">
+      <div class="theme-name">cleanliness</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:100.0%"></div></div>
+      <div class="theme-count">98</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">staff</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:75.51020408163265%"></div></div>
+      <div class="theme-count">74</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">bathroom</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:75.51020408163265%"></div></div>
+      <div class="theme-count">74</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">bedding</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:69.38775510204081%"></div></div>
+      <div class="theme-count">68</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">maintenance</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:67.34693877551021%"></div></div>
+      <div class="theme-count">66</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">breakfast</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:51.02040816326531%"></div></div>
+      <div class="theme-count">50</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">safety</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:36.734693877551024%"></div></div>
+      <div class="theme-count">36</div>
+    </div>
+    <div class="theme-row">
+      <div class="theme-name">noise</div>
+      <div class="theme-bar-wrap"><div class="theme-bar" style="width:25.510204081632654%"></div></div>
+      <div class="theme-count">25</div>
+    </div>
       </div>
     </div>
-  </section>
+  </div>
+</div>
 
-  <section class="section">
-    <div class="container">
-      <div class="grid grid-3 gap-8">
-        <div>
-          <div class="eyebrow mb-4">01 · The reply pipeline</div>
-          <h3 class="display-sm mb-4">Replies in your <span class="italic">voice</span></h3>
-          <p class="text-soft" style="font-size: 14px; line-height: 1.7;">Every review gets drafted, tiered by risk, and queued for the right person. Low-risk replies post in 4 hours. High-risk reviews go straight to the GM. No "thanks for your feedback" energy.</p>
-        </div>
-        <div>
-          <div class="eyebrow mb-4">02 · The request pipeline</div>
-          <h3 class="display-sm mb-4">Special requests, <span class="italic">closed-loop</span></h3>
-          <p class="text-soft" style="font-size: 14px; line-height: 1.7;">Forward your special-request inbox once. We extract intent, push to your GM on WhatsApp with a 1-tap approve, schedule a 9 AM front-desk reminder, and check post-stay if it landed.</p>
-        </div>
-        <div>
-          <div class="eyebrow mb-4">03 · The analytics pipeline</div>
-          <h3 class="display-sm mb-4">Action items, not <span class="italic">charts</span></h3>
-          <p class="text-soft" style="font-size: 14px; line-height: 1.7;">"Replace carpet in room 105 — 3 guests, 2 platforms, 14 days. $1,800 revenue at risk if ignored. Carpet replacement pays back in 28 days." That's a finding. Not a sentiment graph.</p>
-        </div>
+<div class="section">
+  <div class="section-hdr">
+    <div class="section-title">Causal Findings · what's driving the score</div>
+    <div class="section-meta">4 ACTIVE · <a href="actions.html" style="color:var(--cyan);text-decoration:none">VIEW ALL ↗</a></div>
+  </div>
+</div>
+
+<div class="findings-grid">
+  
+    <a href="actions.html" class="finding-card f-red">
+      <div class="finding-impact">
+        <div class="finding-impact-val">~$22K</div>
+        <div class="finding-impact-lbl">monthly revenue at risk</div>
       </div>
-    </div>
-  </section>
+      <div class="finding-hdr"><span class="tag tag-red">CLEANLINESS CRISIS</span></div>
+      <div class="finding-title">Cleanliness · #1 issue across all 7 platforms</div>
+      <div class="finding-desc">98 of 437 negative reviews (22%) cite cleanliness. Specific complaints across Booking, Expedia, Google: stained mattresses, dust, hair, sticky surfaces.</div>
+      <div class="finding-cta">→ Deep-clean audit + housekeeping training. 3rd-party inspection weekly for 60 days.</div>
+    </a>
+    <a href="actions.html" class="finding-card f-red">
+      <div class="finding-impact">
+        <div class="finding-impact-val">~$11K</div>
+        <div class="finding-impact-lbl">estimated annual booking loss</div>
+      </div>
+      <div class="finding-hdr"><span class="tag tag-red">REPLY GAP</span></div>
+      <div class="finding-title">0% reply rate on Google, Expedia, Hotels</div>
+      <div class="finding-desc">75 Google reviews + 118 Expedia + 108 Hotels.com = 301 reviews with NO owner reply. Only Booking gets responses (64%). This is leaving conversion on the table.</div>
+      <div class="finding-cta">→ Buildd auto-reply system: 100% reply rate across all 7 platforms in week 1.</div>
+    </a>
+    <a href="actions.html" class="finding-card f-amber">
+      <div class="finding-impact">
+        <div class="finding-impact-val">~$14K</div>
+        <div class="finding-impact-lbl">capex + ongoing rev impact</div>
+      </div>
+      <div class="finding-hdr"><span class="tag tag-amber">INFRASTRUCTURE</span></div>
+      <div class="finding-title">Bathroom + bedding clustering</div>
+      <div class="finding-desc">74 bathroom + 68 bedding complaints. Multiple guests cite stained mattresses, burns on sheets, broken bathroom handles.</div>
+      <div class="finding-cta">→ Mattress + sheet replacement program. ~$400-600/room.</div>
+    </a>
+    <a href="actions.html" class="finding-card f-amber">
+      <div class="finding-impact">
+        <div class="finding-impact-val">+0.4</div>
+        <div class="finding-impact-lbl">rating lift potential from training</div>
+      </div>
+      <div class="finding-hdr"><span class="tag tag-amber">STAFF FRICTION</span></div>
+      <div class="finding-title">Staff is the 2nd most-cited theme</div>
+      <div class="finding-desc">74 staff mentions in negative reviews — front desk rudeness is recurring. But high-rated reviews ALSO praise staff. Pattern suggests inconsistency, not systemic issue.</div>
+      <div class="finding-cta">→ Identify the 2-3 staff members driving negative mentions. Coaching or reassign.</div>
+    </a>
+</div>
 
-  <section class="section" style="background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);" id="how">
-    <div class="container">
-      <div class="eyebrow mb-4">The graph is the moat</div>
-      <h2 class="display-lg mb-8" style="max-width: 760px;">We don't just <span class="italic">read</span> your reviews. We have full extranet access to the channels that <span class="italic">produce</span> them.</h2>
-      <div class="grid grid-2 gap-8">
-        <div>
-          <p style="font-size: 16px; line-height: 1.7;">Medallia, Reputation.com, Birdeye — they all read reviews from APIs. They see what guests wrote.</p>
-          <p style="font-size: 16px; line-height: 1.7; margin-top: 16px;">GuestGraph sees what guests <em>paid</em>. What promo they booked under. Which room. Which staff member was on shift. What our compset charged that night. Whether the AC ticket was already open.</p>
-          <p style="font-size: 16px; line-height: 1.7; margin-top: 16px;"><strong>That's not a feature. That's a different category of product.</strong></p>
-          <div class="moat-quote mt-8">
-            "PriceCortex sets the price. GuestGraph earns the trust. FolioLens shows the owner the score."
+<footer class="footer">
+  <div>BUILDD FROM IDEAS · REPUTATION × REVENUE INTELLIGENCE · 625 REAL REVIEWS INGESTED</div>
+  <div class="footer-products">
+    <a href="#" class="footer-product">PRICECORTEX</a>
+    <a href="#" class="footer-product">FOLIOLENS</a>
+    <a href="dashboard.html" class="footer-product current">REPUTATION</a>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="ingestModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">INGEST REVIEWS · paste or upload from extranet</div>
+      <button class="modal-close" onclick="closeIngestModal()">×</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab(event, 'google')">Google paste</button>
+      <button class="modal-tab" onclick="switchTab(event, 'csv')">Booking/Expedia CSV</button>
+      <button class="modal-tab" onclick="switchTab(event, 'history')">Recent ingests</button>
+    </div>
+    <div class="modal-body">
+      <div id="tab-google" class="tab-content">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6">
+          1. Open Google Business Profile reviews<br>
+          2. Select all visible reviews (Cmd+A or Ctrl+A)<br>
+          3. Copy & paste below — Buildd auto-parses authors, dates, ratings, and themes
+        </div>
+        <textarea class="paste-area" id="pasteArea" placeholder="Paste Google reviews here..."></textarea>
+        <button class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center" onclick="parsePaste()">Parse & ingest ↗</button>
+        <div class="parse-result" id="parseResult"></div>
+      </div>
+      <div id="tab-csv" class="tab-content" style="display:none">
+        <div class="upload-area">
+          <div class="upload-icon">↑</div>
+          <div style="font-size:13px;color:var(--white);font-weight:600;margin-bottom:6px">Drop CSV here or click to browse</div>
+          <div style="font-size:11px;color:var(--muted)">Booking.com extranet export · Expedia Partner Central · max 5MB</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);text-align:center">Last upload · Booking.com · 14 min ago · 12 new reviews</div>
+      </div>
+      <div id="tab-history" class="tab-content" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:var(--s2);padding:12px 14px;border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:12px;color:var(--white);font-weight:600">Booking.com CSV · ✓ ingested</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace">Apr 28, 14:46 · 12 new · 4 high-risk auto-escalated</div></div>
+            <span class="tag tag-cyan">12 new</span>
+          </div>
+          <div style="background:var(--s2);padding:12px 14px;border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:12px;color:var(--white);font-weight:600">Google paste · ✓ ingested</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace">Apr 28, 14:32 · 75 reviews · 22 new since last sync</div></div>
+            <span class="tag tag-cyan">22 new</span>
+          </div>
+          <div style="background:var(--s2);padding:12px 14px;border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:12px;color:var(--white);font-weight:600">Expedia CSV · ✓ ingested</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace">Apr 28, 14:18 · 6 new · all auto-replied</div></div>
+            <span class="tag tag-cyan">6 new</span>
           </div>
         </div>
-        <div class="card card-padded" style="background: var(--cream-dark);">
-          <div class="eyebrow mb-4">Belmont Inn · 12 months on GuestGraph</div>
-          <div class="grid grid-2 gap-6 mb-6">
-            <div class="stat">
-              <div class="stat-value">8.6</div>
-              <div class="stat-label">Composite rating <span class="delta-up">↑ from 7.8</span></div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">#6</div>
-              <div class="stat-label">Booking compset rank <span class="delta-up">↑ from #14</span></div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">100%</div>
-              <div class="stat-label">Reply rate <span class="delta-up">↑ from 11%</span></div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">$31.4K</div>
-              <div class="stat-label">Revenue from rep lift</div>
-            </div>
-          </div>
-          <a href="pages/dashboard.html" class="btn btn-primary w-full" style="justify-content: center;">Open Belmont's dashboard →</a>
-        </div>
       </div>
     </div>
-  </section>
+  </div>
+</div>
 
-  <section class="section">
-    <div class="container">
-      <div class="text-center mb-8">
-        <div class="eyebrow mb-4">Six surfaces · one graph</div>
-        <h2 class="display-lg" style="max-width: 720px; margin: 0 auto;">Everyone gets the right information on the right channel.</h2>
-      </div>
-      <div class="grid grid-3 gap-4">
-        <a href="pages/dashboard.html" class="card card-padded" style="text-decoration: none; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
-          <div class="eyebrow mb-2">For owners</div>
-          <h3 class="display-sm mb-2">Live dashboard</h3>
-          <p class="text-soft" style="font-size: 13px;">Real-time rating, ranking, action items, and chatbot — login from anywhere.</p>
-        </a>
-        <a href="pages/actions.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
-          <div class="eyebrow mb-2">For owners</div>
-          <h3 class="display-sm mb-2">Action items</h3>
-          <p class="text-soft" style="font-size: 13px;">Carpet in 105. AC in 214. Mobile Deal cohort. With cost, ROI, and payback.</p>
-        </a>
-        <a href="pages/chatbot.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
-          <div class="eyebrow mb-2">For owners</div>
-          <h3 class="display-sm mb-2">Ask GuestGraph</h3>
-          <p class="text-soft" style="font-size: 13px;">"Why did September dip?" Ask in plain English. Get answers grounded in your graph.</p>
-        </a>
-        <a href="pages/team.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
-          <div class="eyebrow mb-2">For your ops team</div>
-          <h3 class="display-sm mb-2">Reply queue</h3>
-          <p class="text-soft" style="font-size: 13px;">Every review tiered. Drafted in your voice. 1-tap to approve, send to GM, or edit.</p>
-        </a>
-        <a href="pages/whatsapp.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
-          <div class="eyebrow mb-2">For your GM</div>
-          <h3 class="display-sm mb-2">WhatsApp alerts</h3>
-          <p class="text-soft" style="font-size: 13px;">Special requests, service recovery, and high-risk reviews — with 1-tap actions.</p>
-        </a>
-        <a href="pages/report.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
-          <div class="eyebrow mb-2">For owners</div>
-          <h3 class="display-sm mb-2">Monthly report</h3>
-          <p class="text-soft" style="font-size: 13px;">Auto-generated, board-ready PDF in the Buildd partnership format owners already trust.</p>
-        </a>
-      </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const chartLabels = ["2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"];
+const chartData = [2.8, 3.29, 3.75, 3.25, 3.11, 4.56, 3.59, 4.64, 3.79, 4.33, 2.5, 4.05, 5.15, 5.68, 3.11, 3.25, 5.25, 5.26, 7.01, 5.41, 3.53, 6.54, 5.64, 4.31];
+
+window.addEventListener('load', () => {
+  const ctx = document.getElementById('trendChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartLabels,
+      datasets: [{
+        label: 'Avg rating',
+        data: chartData,
+        borderColor: '#00f0b5',
+        backgroundColor: 'rgba(0,240,181,0.08)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        pointBackgroundColor: '#00f0b5',
+        pointBorderColor: '#060a10',
+        pointBorderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 10, ticks: { color: '#4a5568', font: { family: 'JetBrains Mono', size: 10 } }, grid: { color: 'rgba(26,37,64,0.4)' } },
+        x: { ticks: { color: '#4a5568', font: { family: 'JetBrains Mono', size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 12 }, grid: { display: false } }
+      }
+    }
+  });
+});
+
+function openIngestModal() {
+  document.getElementById('ingestModal').classList.add('show');
+  document.body.classList.add('modal-open');
+}
+function closeIngestModal() {
+  document.getElementById('ingestModal').classList.remove('show');
+  document.body.classList.remove('modal-open');
+}
+function switchTab(e, name) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  document.getElementById('tab-' + name).style.display = 'block';
+}
+function parsePaste() {
+  const text = document.getElementById('pasteArea').value;
+  const result = document.getElementById('parseResult');
+  if (!text || text.length < 50) {
+    result.innerHTML = '<span style="color:var(--amber)">Paste some Google review text first.</span>';
+    result.classList.add('show');
+    return;
+  }
+  // Simulate parsing
+  const lines = text.split('\n').filter(l => l.trim());
+  const reviewCount = Math.max(1, Math.floor(lines.filter(l => /\d+ reviews?/.test(l)).length));
+  result.innerHTML = `
+    <div style="color:var(--cyan);font-weight:600;margin-bottom:8px">✓ PARSE COMPLETE</div>
+    <div style="color:var(--text);line-height:1.6">
+      Detected: ${reviewCount} reviews<br>
+      Auto-tagged themes: cleanliness, staff, bathroom<br>
+      Tier 1 auto-post: ${Math.floor(reviewCount*0.4)}<br>
+      Tier 2 GM intervention: ${Math.floor(reviewCount*0.3)}<br>
+      Tier 3 escalated: ${Math.floor(reviewCount*0.3)}<br>
+      <br>
+      <span style="color:var(--cyan)">→ Reviews added to dashboard. Refresh to see.</span>
     </div>
-  </section>
+  `;
+  result.classList.add('show');
+}
+document.getElementById('ingestModal').addEventListener('click', e => {
+  if (e.target.id === 'ingestModal') closeIngestModal();
+});
+</script>
 
-  <section class="section" style="background: var(--cream-dark);">
-    <div class="container">
-      <div class="text-center mb-8">
-        <div class="eyebrow mb-4">The product family</div>
-        <h2 class="display-lg" style="max-width: 720px; margin: 0 auto;">Three products. One platform. Every revenue lever a hotel has.</h2>
-      </div>
-      <div class="grid grid-3 gap-4">
-        <div class="card card-padded">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px; background: var(--blue-accent);">P</span>
-            <span style="font-family: var(--font-display); font-size: 17px; font-weight: 500;">PriceCortex</span>
-          </div>
-          <p class="text-soft" style="font-size: 13px; line-height: 1.6;">Neural-network dynamic pricing. Sets the right rate for every room, every day, every channel — based on demand signals, compset, and your conversion funnel.</p>
-          <div class="eyebrow mt-4" style="color: var(--blue-accent);">Sets the price</div>
-        </div>
-        <div class="card card-padded" style="border-color: var(--navy-900); border-width: 2px;">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px;">G</span>
-            <span style="font-family: var(--font-display); font-size: 17px; font-weight: 500;">GuestGraph</span>
-            <span class="pill pill-blue" style="margin-left: auto;">New</span>
-          </div>
-          <p class="text-soft" style="font-size: 13px; line-height: 1.6;">Reputation × Revenue intelligence. Maps every review to a guest, a stay, a rate, a room. Tiered replies, special-request automation, and action items that actually <em>act</em>.</p>
-          <div class="eyebrow mt-4" style="color: var(--navy-900);">Earns the trust</div>
-        </div>
-        <div class="card card-padded">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px; background: #6B47B8;">F</span>
-            <span style="font-family: var(--font-display); font-size: 17px; font-weight: 500;">FolioLens</span>
-          </div>
-          <p class="text-soft" style="font-size: 13px; line-height: 1.6;">The owner's command center. Every property, every channel, every metric in one place. PriceCortex and GuestGraph both report up to FolioLens.</p>
-          <div class="eyebrow mt-4" style="color: #6B47B8;">Shows the score</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="card" style="background: var(--navy-900); color: var(--cream); padding: 64px 48px; border: none;">
-        <div class="eyebrow mb-4" style="color: var(--cream-dark); opacity: 0.7;">The Medallia moment</div>
-        <h2 class="display-lg mb-6" style="max-width: 820px; color: var(--cream);">Medallia just got handed to its lenders for a <span class="italic">$5.1B</span> equity wipeout.</h2>
-        <p style="font-size: 17px; line-height: 1.7; max-width: 780px; opacity: 0.85; margin-bottom: 24px;">They built a feedback aggregator and called it intelligence. We built a Reputation × Revenue graph, and we did it with the one thing they can't replicate: full extranet access through hands-on revenue management of every property we serve.</p>
-        <div class="flex gap-3">
-          <a href="pages/dashboard.html" class="btn" style="background: var(--cream); color: var(--navy-900);">See the difference →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<div id="site-footer"></div>
-<script src="assets/chrome.js"></script>
-</body>
-</html>
+</body></html>
