@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp · Belmont · GuestGraph</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<script>const BASE = '../';</script>
+<style>
+  .wa-hero { padding: 32px 0 24px; border-bottom: 1px solid var(--line); }
+  .phones-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    padding: 32px 0;
+  }
+  .phone-frame {
+    max-width: 360px;
+    margin: 0 auto;
+    background: #1A1A1A;
+    border-radius: 36px;
+    padding: 14px;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.25);
+  }
+  .phone-screen {
+    background: #ECE5DD;
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 640px;
+  }
+  .wa-header {
+    background: #075E54;
+    color: white;
+    padding: 36px 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wa-avatar {
+    width: 36px; height: 36px;
+    background: var(--cream);
+    color: var(--navy-900);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .wa-thread {
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .wa-msg {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 14px;
+    max-width: 88%;
+    align-self: flex-start;
+    font-size: 13px;
+    line-height: 1.55;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+    color: #303030;
+  }
+  .wa-msg-self {
+    align-self: flex-end;
+    background: #DCF8C6;
+  }
+  .wa-time {
+    font-size: 10px;
+    color: #888;
+    text-align: right;
+    margin-top: 4px;
+  }
+  .wa-alert-header {
+    background: var(--amber-bg);
+    border-left: 3px solid var(--amber);
+    padding: 6px 10px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 8px;
+    font-size: 10px;
+    color: var(--amber);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .wa-context-table {
+    background: var(--cream-dark);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 8px 0;
+    font-size: 11px;
+  }
+  .wa-context-table div {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+  .wa-context-table div span:first-child { color: var(--ink-mute); }
+  .wa-context-table div span:last-child { font-weight: 500; }
+  .wa-action {
+    background: var(--blue-bg);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 8px 0;
+    font-size: 12px;
+    color: var(--navy-900);
+  }
+  .wa-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .wa-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #075E54;
+    text-align: center;
+    cursor: pointer;
+  }
+  .wa-btn-secondary {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 7px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: center;
+    width: 100%;
+    margin-top: 6px;
+    cursor: pointer;
+  }
+  .phone-label {
+    text-align: center;
+    margin-top: 16px;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .phone-sublabel {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-mute);
+    margin-top: 4px;
+  }
+  @media (max-width: 768px) {
+    .phones-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="whatsapp">
+
+<div id="site-nav"></div>
+
+<main class="container">
+  <section class="wa-hero">
+    <div class="breadcrumb mono" style="color: var(--ink-mute); margin-bottom: 8px;">Belmont Inn & Suites <span style="color: var(--navy-900);">/ WhatsApp surface</span></div>
+    <div>
+      <div class="eyebrow mb-2">Two channels · two audiences</div>
+      <h1 class="display-lg mb-4">Right person. Right alert. <span class="italic">Right now.</span></h1>
+      <p class="text-soft" style="max-width: 720px;">Your GM gets actionable in-the-moment alerts. Your owner gets a daily digest. Both on the channel they actually check — WhatsApp.</p>
+    </div>
+  </section>
+
+  <div class="phones-grid">
+    <div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="wa-header">
+            <div class="wa-avatar">B</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">GuestGraph · Belmont</div>
+              <div style="font-size: 11px; opacity: 0.85;">online · alerts active</div>
+            </div>
+          </div>
+          <div class="wa-thread">
+            <div class="wa-msg">
+              <div class="wa-alert-header">Special request · anniversary</div>
+              <div>Hi GM,</div>
+              <div style="margin-top: 6px;">Sarah & David Chen booked a 2-night stay (Apr 30 – May 2) for their <strong>10th wedding anniversary</strong>. Booking note: <em>"we got engaged here, would love anything that makes it special."</em></div>
+
+              <div class="wa-context-table">
+                <div><span>Stay</span><span>Apr 30 – May 2</span></div>
+                <div><span>Room</span><span>King suite 401</span></div>
+                <div><span>ADR</span><span>$189</span></div>
+                <div><span>Channel</span><span>Booking · direct</span></div>
+                <div><span>Prior stays</span><span>2 (last Mar 2023)</span></div>
+              </div>
+
+              <div style="margin-top: 8px;"><strong>Suggested action</strong> · 1-tap:</div>
+              <div class="wa-action">Sparkling wine + handwritten card on arrival. Cost ~$28. Front desk auto-reminded 9am Apr 30.</div>
+
+              <div class="wa-buttons">
+                <div class="wa-btn">Approve ✓</div>
+                <div class="wa-btn">Modify</div>
+              </div>
+              <div class="wa-btn-secondary">See all 4 open requests →</div>
+              <div class="wa-time">10:42 AM</div>
+            </div>
+
+            <div class="wa-msg wa-msg-self">
+              Approve ✓
+              <div class="wa-time">10:43 AM ✓✓</div>
+            </div>
+
+            <div class="wa-msg">
+              Done. Front desk reminder set for 9am Apr 30. I'll check post-stay if it landed and survey them about the experience.
+              <div class="wa-time">10:43 AM</div>
+            </div>
+
+            <div class="wa-msg" style="background: #FFF8E1;">
+              <div class="wa-alert-header" style="background: var(--red-bg); color: var(--red); border-left-color: var(--red);">⚠ Service recovery · room 218</div>
+              <div>Guest at checkout flagged slow wifi via the QR feedback link. Window: <strong>4 hrs to act</strong>.</div>
+              <div class="wa-action">Suggested: $20 breakfast voucher + free upgrade if returning. Cost ~$20.</div>
+              <div class="wa-buttons">
+                <div class="wa-btn">Send voucher</div>
+                <div class="wa-btn">Custom recovery</div>
+              </div>
+              <div class="wa-time">11:18 AM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">GM channel</div>
+      <div class="phone-sublabel">Special requests · service recovery · high-risk reviews</div>
+    </div>
+
+    <div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="wa-header">
+            <div class="wa-avatar">B</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">GuestGraph · daily digest</div>
+              <div style="font-size: 11px; opacity: 0.85;">Robert · Belmont owner</div>
+            </div>
+          </div>
+          <div class="wa-thread">
+            <div class="wa-msg" style="max-width: 95%;">
+              <div style="font-weight: 600; font-size: 13px; color: var(--navy-900); margin-bottom: 6px;">Good morning, Robert ☀</div>
+              <div style="margin-bottom: 8px;"><strong>Yesterday at Belmont</strong></div>
+
+              <div class="wa-context-table">
+                <div><span>New reviews</span><span>4 · all replied ✓</span></div>
+                <div><span>Avg rating</span><span>8.7 (this week 8.6)</span></div>
+                <div><span>Booking rank</span><span>#6 (held)</span></div>
+                <div><span>Service recoveries</span><span>1 in progress</span></div>
+              </div>
+
+              <div style="margin: 10px 0 4px;"><strong>Needs your eyes</strong></div>
+              <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.6;">• 1 review awaiting GM approval (Jennifer L., chargeback mention)<br>• Action item · room 105 carpet ($1,800 at risk)<br>• Compset: 3 competitors raised ADR 8%+</div>
+
+              <div class="wa-buttons">
+                <div class="wa-btn">Open dashboard</div>
+                <div class="wa-btn">View action items</div>
+              </div>
+              <div class="wa-time">8:00 AM</div>
+            </div>
+
+            <div class="wa-msg" style="max-width: 95%;">
+              <div style="font-weight: 600; font-size: 13px; color: var(--green); margin-bottom: 6px;">Win · this week</div>
+              <div>You moved from #7 → #6 in your Booking compset, passing Holiday Inn Express on Maple. Their composite dropped 0.2 after 3 cleanliness complaints.</div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--ink-soft);">Recommend: refresh listing photos to emphasize housekeeping while they're vulnerable.</div>
+              <div class="wa-buttons">
+                <div class="wa-btn">Tell me more</div>
+                <div class="wa-btn">Skip</div>
+              </div>
+              <div class="wa-time">2:14 PM</div>
+            </div>
+
+            <div class="wa-msg wa-msg-self">
+              Tell me more
+              <div class="wa-time">2:16 PM ✓✓</div>
+            </div>
+
+            <div class="wa-msg" style="max-width: 95%;">
+              Their last 14 days: 3 reviews dropped them — all mentioning "stained carpet" or "musty smell." Sound familiar? They have the same problem we just flagged in your room 105. Difference: <strong>they don't have us catching it.</strong>
+              <div class="wa-time">2:16 PM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Owner channel</div>
+      <div class="phone-sublabel">Daily digest · weekly wins · monthly ROI summary</div>
+    </div>
+  </div>
+
+  <section style="padding: 32px 0 64px;">
+    <div class="card card-padded" style="background: var(--cream-dark);">
+      <div class="grid grid-3 gap-6">
+        <div>
+          <div class="eyebrow mb-2">Why WhatsApp</div>
+          <h3 class="display-sm mb-2">98% open rate</h3>
+          <p class="text-soft" style="font-size: 13px;">GMs don't check email reliably. They check WhatsApp. Period.</p>
+        </div>
+        <div>
+          <div class="eyebrow mb-2">Why 1-tap</div>
+          <h3 class="display-sm mb-2">30 seconds</h3>
+          <p class="text-soft" style="font-size: 13px;">Decisions take 30 seconds, not 30 minutes. Suggested action with budget = approval velocity.</p>
+        </div>
+        <div>
+          <div class="eyebrow mb-2">Why context</div>
+          <h3 class="display-sm mb-2">Every alert is enriched</h3>
+          <p class="text-soft" style="font-size: 13px;">Stay dates, room, ADR, channel, prior history. No GM should ever ask "who's this guest?"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="../assets/chrome.js"></script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Action items · Belmont Inn · GuestGraph</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<script>const BASE = '../';</script>
+<style>
+  .action-hero { padding: 32px 0 24px; border-bottom: 1px solid var(--line); }
+  .action-list-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .action-list-item:hover { background: var(--cream); }
+  .action-list-item:last-child { border-bottom: none; }
+  .action-num {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink-mute);
+    min-width: 32px;
+  }
+  .action-meta { display: flex; gap: 12px; align-items: center; }
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 6px 14px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-chip:hover { border-color: var(--navy-900); }
+  .filter-chip.active { background: var(--navy-900); color: var(--cream); border-color: var(--navy-900); }
+  .featured {
+    background: var(--white);
+    border: 2px solid var(--navy-900);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .featured-header {
+    background: var(--navy-900);
+    color: var(--cream);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .evidence-card {
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .impact-card {
+    background: var(--cream-dark);
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+  .recommendation-box {
+    background: var(--blue-bg);
+    border-left: 3px solid var(--blue-accent);
+    padding: 16px 20px;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+</style>
+</head>
+<body data-page="actions">
+
+<div id="site-nav"></div>
+
+<main class="container">
+  <section class="action-hero">
+    <div class="breadcrumb mono" style="color: var(--ink-mute); margin-bottom: 8px;">Belmont Inn & Suites <span style="color: var(--navy-900);">/ Actions</span></div>
+    <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="eyebrow mb-2">Action items · driven by your data</div>
+        <h1 class="display-lg">12 findings, ranked by impact.</h1>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-secondary btn-sm">Export</button>
+        <button class="btn btn-primary btn-sm">Notify GM</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 24px 0;">
+    <div class="filter-bar">
+      <button class="filter-chip active">All findings</button>
+      <button class="filter-chip">Revenue leaks (3)</button>
+      <button class="filter-chip">Operations (4)</button>
+      <button class="filter-chip">Staff (2)</button>
+      <button class="filter-chip">Competitive (3)</button>
+      <button class="filter-chip" style="margin-left: auto;">Sort: by impact ↓</button>
+    </div>
+
+    <div class="featured">
+      <div class="featured-header">
+        <div class="flex items-center gap-3">
+          <span class="pill" style="background: rgba(255,255,255,0.15); color: #FFE8B8;">Featured action · highest impact</span>
+          <span style="opacity: 0.7; font-family: var(--font-mono); font-size: 11px;">detected 2 hrs ago</span>
+        </div>
+        <span class="mono" style="opacity: 0.7;">#001</span>
+      </div>
+
+      <div style="padding: 28px;">
+        <h2 class="display-md mb-2">Replace carpet in <span class="italic">room 105</span></h2>
+        <p class="text-soft mb-6" style="font-size: 14px;">3 guests, 2 platforms, 14 days. Pattern locked.</p>
+
+        <div class="grid gap-6" style="grid-template-columns: 1.4fr 1fr;">
+          <div>
+            <div class="eyebrow mb-3">Evidence · 3 reviews</div>
+
+            <div class="evidence-card">
+              <div class="flex justify-between mb-1" style="font-size: 12px;">
+                <span style="font-weight: 500;">Booking · 8.0 · Apr 14</span>
+                <span class="text-mute">stay Apr 12–14 · room 105</span>
+              </div>
+              <div style="font-size: 13px; color: var(--ink-soft); font-style: italic;">"Carpet smelled musty, otherwise fine."</div>
+            </div>
+
+            <div class="evidence-card">
+              <div class="flex justify-between mb-1" style="font-size: 12px;">
+                <span style="font-weight: 500;">Google · 3 / 5 · Apr 21</span>
+                <span class="text-mute">stay Apr 19–21 · room 105</span>
+              </div>
+              <div style="font-size: 13px; color: var(--ink-soft); font-style: italic;">"Floor felt damp and there was a smell coming from the carpet."</div>
+            </div>
+
+            <div class="evidence-card">
+              <div class="flex justify-between mb-1" style="font-size: 12px;">
+                <span style="font-weight: 500;">Booking · 7.5 · Apr 26</span>
+                <span class="text-mute">stay Apr 24–26 · room 105</span>
+              </div>
+              <div style="font-size: 13px; color: var(--ink-soft); font-style: italic;">"Could smell something off when we walked in. Looks like a carpet issue."</div>
+            </div>
+
+            <div class="eyebrow mt-6 mb-3">Causal trace · what the graph found</div>
+            <table class="w-full" style="font-size: 13px;">
+              <tr style="border-bottom: 1px solid var(--line);"><td class="text-soft" style="padding: 8px 0; width: 50%;">Same room</td><td style="padding: 8px 0; font-weight: 500;">105 · all 3 stays</td></tr>
+              <tr style="border-bottom: 1px solid var(--line);"><td class="text-soft" style="padding: 8px 0;">Theme cluster</td><td style="padding: 8px 0; font-weight: 500;">smell + carpet + damp</td></tr>
+              <tr style="border-bottom: 1px solid var(--line);"><td class="text-soft" style="padding: 8px 0;">Last carpet replacement</td><td style="padding: 8px 0; font-weight: 500;">Apr 2018 (8 years)</td></tr>
+              <tr style="border-bottom: 1px solid var(--line);"><td class="text-soft" style="padding: 8px 0;">Maintenance tickets filed</td><td style="padding: 8px 0; font-weight: 500;">none</td></tr>
+              <tr><td class="text-soft" style="padding: 8px 0;">Adjacent rooms 103, 107</td><td style="padding: 8px 0; font-weight: 500;">no complaints</td></tr>
+            </table>
+          </div>
+
+          <div>
+            <div class="eyebrow mb-3">Projected impact if ignored</div>
+            <div class="grid gap-3" style="grid-template-columns: 1fr;">
+              <div class="impact-card">
+                <div class="stat-label">Rating drift · 60 days</div>
+                <div style="font-family: var(--font-display); font-size: 24px; font-weight: 500; color: var(--red);">-0.2 to -0.4</div>
+              </div>
+              <div class="impact-card">
+                <div class="stat-label">Ranking decline · Booking</div>
+                <div style="font-family: var(--font-display); font-size: 24px; font-weight: 500; color: var(--red);">~2 spots</div>
+              </div>
+              <div class="impact-card">
+                <div class="stat-label">Revenue at risk · 90 days</div>
+                <div style="font-family: var(--font-display); font-size: 24px; font-weight: 500; color: var(--red);">~$1,800</div>
+              </div>
+            </div>
+
+            <div class="recommendation-box mt-6">
+              <div class="eyebrow mb-2" style="color: var(--blue-accent);">Recommended action</div>
+              <div style="font-size: 14px; line-height: 1.6; color: var(--navy-900); margin-bottom: 8px;">Block room 105 for 2 nights. Replace carpet (vendor estimate <strong>$480–650</strong>). Take new room photos for OTA listing refresh.</div>
+              <div style="font-size: 12px; color: var(--blue-accent); font-weight: 500;">Modeled ROI · payback in ~28 days from preserved revenue</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6" style="border-top: 1px solid var(--line); padding-top: 20px;">
+          <button class="btn btn-primary">Approve & assign to maintenance</button>
+          <button class="btn btn-secondary">Block room</button>
+          <button class="btn btn-secondary">Snooze 7 days</button>
+          <button class="btn btn-ghost" style="margin-left: auto;">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="display-md mb-4">Other findings</h2>
+    <div class="card">
+      <div class="action-list-item">
+        <div class="action-num">02</div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pill pill-red">Revenue leak</span>
+            <span class="mono text-mute" style="font-size: 11px;">31 reviews · 90 days</span>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 4px;">Mobile Deal cohort rates 0.6 stars lower</h3>
+          <p style="font-size: 13px; color: var(--ink-soft);">-15% Mobile Deal guests average 8.1 vs 8.7 from full-rate. Recommendation: cap at 10%.</p>
+        </div>
+        <div class="text-center">
+          <div class="stat-value" style="font-size: 22px; color: var(--red);">$4,200</div>
+          <div class="stat-label">at risk / 90d</div>
+        </div>
+      </div>
+
+      <div class="action-list-item">
+        <div class="action-num">03</div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pill pill-amber">Operations</span>
+            <span class="mono text-mute" style="font-size: 11px;">3 reviews · 14 days</span>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 4px;">AC complaints clustering · rooms 210–220</h3>
+          <p style="font-size: 13px; color: var(--ink-soft);">3rd AC mention this month, same room block. HVAC ticket reopened.</p>
+        </div>
+        <div class="text-center">
+          <div class="stat-value" style="font-size: 22px; color: var(--red);">$2,900</div>
+          <div class="stat-label">at risk / 90d</div>
+        </div>
+      </div>
+
+      <div class="action-list-item">
+        <div class="action-num">04</div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pill pill-blue">Competitive</span>
+            <span class="mono text-mute" style="font-size: 11px;">14 days</span>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 4px;">Holiday Inn Express bleeding cleanliness</h3>
+          <p style="font-size: 13px; color: var(--ink-soft);">Their composite dropped 0.2. Capture share with housekeeping-focused listing photos.</p>
+        </div>
+        <div class="text-center">
+          <div class="stat-value" style="font-size: 22px; color: var(--green);">$3,400</div>
+          <div class="stat-label">opportunity</div>
+        </div>
+      </div>
+
+      <div class="action-list-item">
+        <div class="action-num">05</div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pill pill-green">Staff</span>
+            <span class="mono text-mute" style="font-size: 11px;">12 mentions</span>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 4px;">Maria's playbook for Sat night shifts</h3>
+          <p style="font-size: 13px; color: var(--ink-soft);">She's named in 7 reviews, all 9+. Sat nights without her: -0.8 stars across all themes.</p>
+        </div>
+        <div class="text-center">
+          <div class="stat-value" style="font-size: 22px; color: var(--green);">+0.3</div>
+          <div class="stat-label">projected lift</div>
+        </div>
+      </div>
+
+      <div class="action-list-item">
+        <div class="action-num">06</div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pill pill-amber">Operations</span>
+            <span class="mono text-mute" style="font-size: 11px;">5 reviews · 30 days</span>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 4px;">Wifi complaints concentrated on 4th floor</h3>
+          <p style="font-size: 13px; color: var(--ink-soft);">Possible router placement issue. Consider mesh extender. Low cost, high impact.</p>
+        </div>
+        <div class="text-center">
+          <div class="stat-value" style="font-size: 22px; color: var(--red);">$1,200</div>
+          <div class="stat-label">at risk / 90d</div>
+        </div>
+      </div>
+
+      <div class="action-list-item">
+        <div class="action-num">07</div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pill pill-blue">Competitive</span>
+            <span class="mono text-mute" style="font-size: 11px;">compset · 30 days</span>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 4px;">3 of your 5 top competitors raised prices 8%+</h3>
+          <p style="font-size: 13px; color: var(--ink-soft);">Compset ADR moved $112 → $121. You're now $7 below market avg with same rating.</p>
+        </div>
+        <div class="text-center">
+          <div class="stat-value" style="font-size: 22px; color: var(--green);">$8,400</div>
+          <div class="stat-label">opportunity</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-6">
+      <button class="btn btn-secondary">Show all 12 findings →</button>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="../assets/chrome.js"></script>
+</body>
+</html>

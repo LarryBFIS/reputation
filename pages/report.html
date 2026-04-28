@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Report · Belmont · GuestGraph</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<script>const BASE = '../';</script>
+<style>
+  .report-doc {
+    background: var(--white);
+    max-width: 880px;
+    margin: 32px auto 64px;
+    padding: 64px 56px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 24px -8px rgba(0,0,0,0.08);
+  }
+  .report-header {
+    text-align: center;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 48px;
+  }
+  .report-section {
+    margin-bottom: 48px;
+  }
+  .report-section h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--navy-900);
+    text-align: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+  .report-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .report-stat-box {
+    padding: 24px;
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+  .report-stat-box-green { background: var(--green-bg); }
+  .report-stat-box-blue { background: var(--blue-bg); }
+  .report-stat-value {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--navy-900);
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .report-stat-label {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid var(--line);
+  }
+  .report-table th {
+    background: var(--navy-900);
+    color: var(--cream);
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .report-table th:first-child { text-align: left; }
+  .report-table th:not(:first-child) { text-align: right; }
+  .report-table td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    text-align: right;
+  }
+  .report-table td:first-child { text-align: left; font-weight: 500; }
+  .report-table tr:nth-child(even) { background: var(--cream); }
+  .report-table tr.total td { background: var(--navy-100); font-weight: 500; border-top: 2px solid var(--navy-900); }
+  .delta-green-cell { color: var(--green); font-weight: 500; }
+  .delta-red-cell { color: var(--red); font-weight: 500; }
+  .callout-box {
+    background: var(--blue-bg);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+  .callout-box-amber { background: var(--amber-bg); }
+  .callout-box-red { background: var(--red-bg); }
+  .next-up-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .next-up-item {
+    background: var(--cream);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+  }
+  .report-bottom-line {
+    background: var(--navy-900);
+    color: var(--cream);
+    padding: 32px;
+    text-align: center;
+    border-radius: var(--radius-lg);
+  }
+  .report-bottom-line h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .report-bottom-line .stat-line {
+    font-size: 14px;
+    margin: 6px 0;
+    opacity: 0.92;
+  }
+  .report-bottom-line .at-risk {
+    color: #FFAFAF;
+    font-weight: 500;
+    margin-top: 14px;
+  }
+  .report-toolbar {
+    background: var(--navy-900);
+    color: var(--cream);
+    padding: 16px 24px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  @media print {
+    .report-toolbar, #site-nav, #site-footer, nav { display: none; }
+    .report-doc { box-shadow: none; border: none; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body data-page="report">
+
+<div id="site-nav"></div>
+
+<main class="container">
+  <div class="report-toolbar">
+    <div class="flex items-center gap-3">
+      <span class="eyebrow" style="color: var(--cream-dark);">Auto-generated · 1 click from dashboard</span>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn btn-sm" style="background: rgba(255,255,255,0.12); color: var(--cream);" onclick="window.print()">Download PDF</button>
+      <button class="btn btn-sm" style="background: rgba(255,255,255,0.12); color: var(--cream);">Email to owner</button>
+    </div>
+  </div>
+
+  <div class="report-doc">
+    <div class="report-header">
+      <div class="logo-mark" style="margin: 0 auto 16px; width: 36px; height: 36px;">B</div>
+      <div class="eyebrow mb-2">Buildd From Ideas · GuestGraph · Reputation Partnership</div>
+      <h1 class="display-lg" style="margin-bottom: 8px;">Belmont Inn & Suites</h1>
+      <div style="font-size: 16px; color: var(--ink-soft); font-style: italic; font-family: var(--font-display);">Reputation Partnership Review · April 2026</div>
+      <div style="font-size: 12px; color: var(--ink-mute); margin-top: 8px; font-family: var(--font-mono);">What we have built together · what is at stake</div>
+    </div>
+
+    <div class="report-section">
+      <div class="report-stats">
+        <div class="report-stat-box report-stat-box-green">
+          <div class="report-stat-value">8.6</div>
+          <div class="report-stat-label">Composite rating · ↑ from 7.8</div>
+        </div>
+        <div class="report-stat-box report-stat-box-blue">
+          <div class="report-stat-value">#6</div>
+          <div class="report-stat-label">Booking compset rank · ↑ from #14</div>
+        </div>
+        <div class="report-stat-box report-stat-box-green">
+          <div class="report-stat-value">$31,400</div>
+          <div class="report-stat-label">Revenue attributed to rep lift</div>
+        </div>
+        <div class="report-stat-box report-stat-box-blue">
+          <div class="report-stat-value">100%</div>
+          <div class="report-stat-label">Reply rate · 247 reviews managed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h2>Your reputation story</h2>
+      <p class="text-center text-soft mb-6" style="font-size: 14px;">Pre-BFIS vs Post-BFIS, every metric that matters:</p>
+      <table class="report-table">
+        <thead><tr><th>Metric</th><th>Pre-BFIS</th><th>Post-BFIS</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>Composite rating (weighted)</td><td>7.8</td><td>8.6</td><td class="delta-green-cell">+0.8</td></tr>
+          <tr><td>Review response rate</td><td>11%</td><td>100%</td><td class="delta-green-cell">+89 pts</td></tr>
+          <tr><td>Avg response time</td><td>14 days</td><td>2.3 hrs</td><td class="delta-green-cell">99% faster</td></tr>
+          <tr><td>Review velocity (per month)</td><td>12</td><td>21</td><td class="delta-green-cell">+75%</td></tr>
+          <tr><td>Booking ranking (compset)</td><td>#14</td><td>#6</td><td class="delta-green-cell">↑ 8 spots</td></tr>
+          <tr><td>Negative reviews recovered pre-publish</td><td>0</td><td>14</td><td class="delta-green-cell">+14</td></tr>
+        </tbody>
+      </table>
+      <div class="callout-box">
+        <div style="font-size: 16px; font-family: var(--font-display); font-weight: 500; color: var(--navy-900);">Composite rating moved <em>+0.8</em>, ranking moved up 8 spots, and we now reply to <em>100%</em> of reviews in under 2.3 hours.</div>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h2>Platform performance</h2>
+      <table class="report-table">
+        <thead><tr><th>Platform</th><th>Reviews</th><th>Rating</th><th>Reply %</th><th>Δ vs Pre-BFIS</th></tr></thead>
+        <tbody>
+          <tr><td>Booking.com</td><td>94</td><td>8.7</td><td>100%</td><td class="delta-green-cell">+0.9</td></tr>
+          <tr><td>Google</td><td>71</td><td>4.3 / 5</td><td>100%</td><td class="delta-green-cell">+0.4</td></tr>
+          <tr><td>Expedia</td><td>38</td><td>4.4 / 5</td><td>100%</td><td class="delta-green-cell">+0.5</td></tr>
+          <tr><td>TripAdvisor</td><td>22</td><td>4.1 / 5</td><td>100%</td><td class="delta-green-cell">+0.6</td></tr>
+          <tr><td>Hotels.com</td><td>14</td><td>8.4</td><td>100%</td><td class="delta-green-cell">+0.7</td></tr>
+          <tr><td>Agoda</td><td>5</td><td>8.2</td><td>100%</td><td class="delta-green-cell">+0.3</td></tr>
+          <tr><td>Priceline</td><td>3</td><td>8.1</td><td>100%</td><td>—</td></tr>
+          <tr class="total"><td>Total</td><td>247</td><td>8.6</td><td>100%</td><td class="delta-green-cell">+0.8 composite</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="report-section">
+      <h2>The causal layer · what only we can show you</h2>
+
+      <div class="callout-box-red callout-box">
+        <div style="font-size: 11px; font-family: var(--font-mono); color: var(--red); letter-spacing: 0.08em; margin-bottom: 6px;">CAUSAL FINDING · #1 · SEPTEMBER DIP EXPLAINED</div>
+        <div style="font-size: 14px; line-height: 1.6;">Your September revenue dropped 23.5% (-$6,344). 6 of the 14 negative reviews that month cited AC issues, all clustered in rooms 210–220. HVAC ticket #BL-2245 was open Aug 28–Oct 4. Your Booking ranking dropped #8 → #14 in those 5 weeks.<br><strong>Estimated revenue impact: -$8,200 from ranking decline alone.</strong></div>
+        <div style="font-size: 12px; color: var(--ink-mute); margin-top: 10px;">Action: HVAC contractor re-engaged. Rooms 210–220 flagged for proactive checks every 60 days.</div>
+      </div>
+
+      <div class="callout-box-amber callout-box">
+        <div style="font-size: 11px; font-family: var(--font-mono); color: var(--amber); letter-spacing: 0.08em; margin-bottom: 6px;">CAUSAL FINDING · #2 · MOBILE DEAL VALUE-MISMATCH</div>
+        <div style="font-size: 14px; line-height: 1.6;">Mobile Deal guests rate 0.6 stars lower (8.1 vs 8.7) and complain about value at 2.3× the rate of full-rate guests. Pattern across 31 reviews this quarter.</div>
+        <div style="font-size: 12px; color: var(--ink-mute); margin-top: 10px;">Recommendation: cap Mobile Deal at 10% off. Modeled rating recovery: +0.2 composite over 60 days.</div>
+      </div>
+
+      <div class="callout-box" style="background: var(--green-bg);">
+        <div style="font-size: 11px; font-family: var(--font-mono); color: var(--green); letter-spacing: 0.08em; margin-bottom: 6px;">CAUSAL FINDING · #3 · STAFF INTELLIGENCE</div>
+        <div style="font-size: 14px; line-height: 1.6;">Maria (front desk, weekday AM) named in 7 reviews this quarter, all 9+. Saturday night shifts (without her) average 0.8 stars lower across all themes.</div>
+        <div style="font-size: 12px; color: var(--ink-mute); margin-top: 10px;">Recommendation: shadow Maria's handoff for night manager training.</div>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h2>Revenue attribution · what reputation work earned you</h2>
+      <div class="report-stats" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="report-stat-box" style="background: var(--cream);">
+          <div class="report-stat-value">+34%</div>
+          <div class="report-stat-label">CTR lift from rank #14 → #6</div>
+        </div>
+        <div class="report-stat-box" style="background: var(--cream);">
+          <div class="report-stat-value">+11%</div>
+          <div class="report-stat-label">Conversion from rating 7.8 → 8.6</div>
+        </div>
+        <div class="report-stat-box" style="background: var(--green-bg);">
+          <div class="report-stat-value">$31,400</div>
+          <div class="report-stat-label">Of $123K OTA growth attributable</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h2>Service recovery · negative reviews prevented</h2>
+      <div class="report-stats" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="report-stat-box" style="background: var(--cream);"><div class="report-stat-value" style="font-size: 28px;">31</div><div class="report-stat-label">Issues caught</div></div>
+        <div class="report-stat-box" style="background: var(--cream);"><div class="report-stat-value" style="font-size: 28px;">14</div><div class="report-stat-label">Recovered</div></div>
+        <div class="report-stat-box" style="background: var(--cream);"><div class="report-stat-value" style="font-size: 28px;">$22</div><div class="report-stat-label">Avg cost</div></div>
+        <div class="report-stat-box" style="background: var(--green-bg);"><div class="report-stat-value" style="font-size: 28px;">+0.3</div><div class="report-stat-label">Rating saved</div></div>
+      </div>
+      <p class="text-soft text-center mt-4" style="font-size: 13px;">Every guest gets the same neutral feedback link at checkout. Negative submissions trigger an instant WhatsApp to the GM with a recovery playbook. <strong>Fully FTC-compliant. No review gating.</strong></p>
+    </div>
+
+    <div class="report-section">
+      <h2>What you lose if you leave</h2>
+      <table class="report-table">
+        <tbody>
+          <tr><td>Response rate drops to industry avg</td><td colspan="3" style="font-weight: 500;">100% → 12%</td></tr>
+          <tr><td>Booking ranking decline (modeled, 90 days)</td><td colspan="3" style="font-weight: 500;">#6 → #11</td></tr>
+          <tr><td>Composite rating drift (12 mo unmanaged)</td><td colspan="3" style="font-weight: 500;">8.6 → ~8.0</td></tr>
+          <tr><td>Causal intelligence (HVAC, staff, promo)</td><td colspan="3" style="font-weight: 500; color: var(--red);">Lost</td></tr>
+          <tr><td>Service recovery engine</td><td colspan="3" style="font-weight: 500;">14 negative reviews/qtr return</td></tr>
+          <tr class="total"><td>Annual revenue at risk</td><td colspan="3" style="font-size: 16px;">~$31,400 + ranking decay</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="report-section">
+      <h2>What's coming next month · already in the pipeline</h2>
+      <div class="next-up-grid">
+        <div class="next-up-item">
+          <div style="font-weight: 500; margin-bottom: 6px; font-family: var(--font-display);">Compset reputation benchmark</div>
+          <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.5;">Top 5 competitors' ratings, themes they're losing on, and 3 attributes you can exploit.</div>
+        </div>
+        <div class="next-up-item">
+          <div style="font-weight: 500; margin-bottom: 6px; font-family: var(--font-display);">Photo-driven listing refresh</div>
+          <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.5;">Re-shoot rooms 210–220 post-HVAC fix. Update Booking & Expedia hero. Modeled CTR lift: 8–12%.</div>
+        </div>
+        <div class="next-up-item">
+          <div style="font-weight: 500; margin-bottom: 6px; font-family: var(--font-display);">Staff coaching playbook</div>
+          <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.5;">Maria's handoff → Sat night training. Q3 target: close the 0.8-star weekend gap.</div>
+        </div>
+        <div class="next-up-item">
+          <div style="font-weight: 500; margin-bottom: 6px; font-family: var(--font-display);">Mobile Deal sentiment test</div>
+          <div style="font-size: 12px; color: var(--ink-soft); line-height: 1.5;">Cap discount at 10% for 60 days. Track sentiment delta. Decision in July.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-bottom-line">
+      <h3>The bottom line</h3>
+      <div class="stat-line">Composite rating: <strong>+0.8</strong> (7.8 → 8.6)</div>
+      <div class="stat-line">Booking compset rank: <strong>↑ 8 spots</strong> (#14 → #6)</div>
+      <div class="stat-line">Revenue attributed to rep lift: <strong>$31,400</strong></div>
+      <div class="stat-line">Negative reviews prevented: <strong>14</strong></div>
+      <div class="at-risk">If we stop, ~$31,400/yr at risk plus ranking decay.</div>
+      <div style="margin-top: 24px; font-style: italic; opacity: 0.85; font-family: var(--font-display);">"Our goal is to keep growing your revenue together."</div>
+    </div>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script src="../assets/chrome.js"></script>
+</body>
+</html>

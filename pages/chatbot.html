@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask GuestGraph · Belmont · GuestGraph</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<script>const BASE = '../';</script>
+<style>
+  .chat-hero { padding: 32px 0 24px; border-bottom: 1px solid var(--line); }
+  .chat-shell {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    padding: 24px 0 64px;
+    min-height: 70vh;
+  }
+  .chat-main {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+  }
+  .chat-sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+  }
+  .sidebar-card h3 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .suggested-q {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.5;
+    font-family: inherit;
+  }
+  .suggested-q:hover { border-color: var(--navy-900); color: var(--navy-900); }
+  .chat-messages {
+    flex: 1;
+    padding: 28px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .msg-user {
+    align-self: flex-end;
+    max-width: 70%;
+    background: var(--navy-900);
+    color: var(--cream);
+    padding: 12px 16px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .msg-bot {
+    align-self: flex-start;
+    max-width: 88%;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+    border-radius: 16px 16px 16px 4px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .msg-bot h4 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--navy-900);
+  }
+  .msg-bot p { margin-bottom: 12px; }
+  .msg-bot p:last-child { margin-bottom: 0; }
+  .citation {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    background: var(--navy-100);
+    color: var(--navy-900);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin: 0 2px;
+    cursor: help;
+  }
+  .data-callout {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin: 12px 0;
+    display: flex;
+    gap: 16px;
+  }
+  .data-callout-stat {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--navy-900);
+    line-height: 1;
+  }
+  .chat-input-bar {
+    border-top: 1px solid var(--line);
+    padding: 16px 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--cream);
+  }
+  .chat-input {
+    flex: 1;
+    padding: 11px 16px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .chat-input:focus { border-color: var(--navy-900); }
+  .send-btn {
+    width: 40px; height: 40px;
+    background: var(--navy-900);
+    color: var(--cream);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .send-btn:hover { background: var(--navy-800); }
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 14px 18px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 16px 16px 16px 4px;
+    width: fit-content;
+  }
+  .typing-indicator span {
+    width: 6px; height: 6px;
+    background: var(--ink-mute);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+  .answer-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-family: var(--font-mono);
+  }
+  @media (max-width: 900px) {
+    .chat-shell { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body data-page="chatbot">
+
+<div id="site-nav"></div>
+
+<main class="container">
+  <section class="chat-hero">
+    <div class="breadcrumb mono" style="color: var(--ink-mute); margin-bottom: 8px;">Belmont Inn & Suites <span style="color: var(--navy-900);">/ Ask GuestGraph</span></div>
+    <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="eyebrow mb-2"><span class="live-dot"></span>Connected to your hotel's full data graph</div>
+        <h1 class="display-lg">Ask anything about Belmont.</h1>
+        <p class="text-soft mt-2" style="max-width: 680px;">Reviews, stays, rates, staff, rooms, tickets, compset — all queryable in plain English. Grounded answers, with citations.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chat-shell">
+    <div class="chat-main">
+      <div class="chat-messages" id="chatMessages">
+
+        <div class="msg-user fade-up">Why did Belmont's revenue dip in September?</div>
+
+        <div class="msg-bot fade-up" style="animation-delay: 0.4s;">
+          <h4>September dip · explained</h4>
+          <p>Your September revenue dropped <strong>23.5% (-$6,344)</strong> versus August. Three things converged:</p>
+
+          <p><strong>1. AC failure cluster.</strong> 6 of the 14 negative reviews that month cited AC issues, all clustered in <span class="citation">rooms 210–220</span>. Your maintenance log shows HVAC ticket <span class="citation">#BL-2245</span> opened Aug 28, closed Oct 4 — so the issue was active for the entire month.</p>
+
+          <div class="data-callout">
+            <div>
+              <div style="font-size: 11px; color: var(--ink-mute); margin-bottom: 4px;">Booking ranking impact</div>
+              <div class="data-callout-stat">#8 → #14</div>
+              <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">over 5 weeks · cost ~$8,200</div>
+            </div>
+            <div style="border-left: 1px solid var(--line); padding-left: 16px;">
+              <div style="font-size: 11px; color: var(--ink-mute); margin-bottom: 4px;">Direct cancellations</div>
+              <div class="data-callout-stat">11 stays</div>
+              <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">post-AC mention reviews</div>
+            </div>
+          </div>
+
+          <p><strong>2. No promotional cover.</strong> You ran zero Booking promotions Sept 8–22, while compset properties launched fall flash sales. Your visibility on the Booking listing dropped ~31% during that window.</p>
+
+          <p><strong>3. Staffing gap.</strong> Sat Sept 14 and 21 had Maria off-shift. Both nights got 1-star reviews citing "no one at front desk after 11pm." Average Sat night rating that month: 7.1 vs property avg 8.0.</p>
+
+          <p><strong>What we did about it:</strong> HVAC contractor re-engaged in October. Rooms 210–220 flagged for proactive checks every 60 days. Ranking recovered to #11 by mid-October, #6 by April. Sat night staffing now has a backup playbook.</p>
+
+          <div class="answer-meta">
+            <span>Sources · 14 reviews, 1 maintenance ticket, 4 staff schedules, Booking compset rankings</span>
+          </div>
+        </div>
+
+        <div class="msg-user fade-up" style="animation-delay: 0.8s;">Show me everything the Mobile Deal is costing us</div>
+
+        <div class="msg-bot fade-up" style="animation-delay: 1.2s;">
+          <h4>Mobile Deal · the value-mismatch problem</h4>
+          <p>Guests who book under your Booking Mobile Deal (-15% off) leave reviews averaging <strong>8.1</strong> versus <strong>8.7</strong> from full-rate guests. That 0.6-star gap holds across <strong>31 reviews this quarter</strong> — statistically robust at this volume.</p>
+
+          <p>The unintuitive part: Mobile Deal guests complain about <em>value for money</em> at <strong>2.3× the rate</strong> of full-rate guests, despite paying less. The pattern suggests they expect a budget property at that price, and judge you against that bar — even though Belmont positions as mid-tier.</p>
+
+          <div class="data-callout">
+            <div>
+              <div style="font-size: 11px; color: var(--ink-mute); margin-bottom: 4px;">Quarterly Mobile Deal revenue</div>
+              <div class="data-callout-stat">$12,400</div>
+            </div>
+            <div style="border-left: 1px solid var(--line); padding-left: 16px;">
+              <div style="font-size: 11px; color: var(--ink-mute); margin-bottom: 4px;">Cost of -0.6 rating drag</div>
+              <div class="data-callout-stat" style="color: var(--red);">~$4,200</div>
+              <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">in suppressed conversion</div>
+            </div>
+          </div>
+
+          <p><strong>Recommendation:</strong> cap Mobile Deal at <strong>10% off</strong> for 60 days. Track the cohort's review sentiment vs the prior cohort. Modeled rating recovery: +0.2 composite. Net revenue impact: positive.</p>
+
+          <div class="answer-meta">
+            <span>Sources · 31 reviews, 89 stay records, Booking promo log, conversion funnel</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <input type="text" class="chat-input" placeholder="Ask anything about Belmont..." id="chatInput">
+        <button class="send-btn" onclick="sendMessage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <aside class="chat-sidebar">
+      <div class="sidebar-card">
+        <h3>Try asking</h3>
+        <button class="suggested-q" onclick="askQ(this.innerText)">Which staff member has the highest guest ratings?</button>
+        <button class="suggested-q" onclick="askQ(this.innerText)">What are my top competitors getting praised for that I'm not?</button>
+        <button class="suggested-q" onclick="askQ(this.innerText)">If I replace the carpet in 105, how fast does it pay back?</button>
+        <button class="suggested-q" onclick="askQ(this.innerText)">Show me every review that mentions the front desk by name</button>
+        <button class="suggested-q" onclick="askQ(this.innerText)">What's the rating gap between weekday and weekend stays?</button>
+        <button class="suggested-q" onclick="askQ(this.innerText)">Which OTAs convert at the highest rate for me?</button>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Connected sources</h3>
+        <div style="font-size: 12px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 8px;">
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Booking · 247 reviews · 312 stays</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Expedia · 38 reviews · 89 stays</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Google Business · 71 reviews</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>TripAdvisor · 22 reviews</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Agoda · 5 · Priceline · 3</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Hotels.com · 14 reviews</div>
+          <div style="border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px;"></div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Maintenance log · 47 tickets</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Staff schedule · 12 mo</div>
+          <div class="flex items-center gap-2"><span style="width: 6px; height: 6px; background: var(--green); border-radius: 50%;"></span>Compset rates · daily</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="../assets/chrome.js"></script>
+<script>
+function askQ(q) {
+  document.getElementById('chatInput').value = q;
+  sendMessage();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if (!q) return;
+  const messages = document.getElementById('chatMessages');
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg-user fade-up';
+  userMsg.textContent = q;
+  messages.appendChild(userMsg);
+
+  input.value = '';
+
+  const typing = document.createElement('div');
+  typing.className = 'typing-indicator fade-up';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    const botMsg = document.createElement('div');
+    botMsg.className = 'msg-bot fade-up';
+    botMsg.innerHTML = `<h4>Demo answer</h4><p>This is a static demo, so this question doesn't query a live graph yet — but in production, GuestGraph would synthesize an answer in 3–5 seconds, citing reviews, stays, rates, staff, and tickets relevant to your question.</p><p>The pre-loaded examples above (the September dip, the Mobile Deal analysis) show the real answer quality.</p>`;
+    messages.appendChild(botMsg);
+    messages.scrollTop = messages.scrollHeight;
+  }, 1100);
+}
+
+document.getElementById('chatInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendMessage();
+});
+</script>
+</body>
+</html>

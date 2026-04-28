@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GuestGraph · Reputation Intelligence by Buildd</title>
+<meta name="description" content="GuestGraph maps every review to the guest who wrote it, what they paid, and what they stayed in. Reputation intelligence for hotels — by Buildd From Ideas.">
+<link rel="stylesheet" href="assets/styles.css">
+<script>const BASE = './';</script>
+<style>
+  .product-family-bar {
+    background: var(--navy-900);
+    color: var(--cream);
+    padding: 10px 0;
+    font-size: 12px;
+  }
+  .family-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .family-products {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .family-product {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.6;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+  }
+  .family-product:hover { opacity: 1; }
+  .family-product.current { opacity: 1; color: #FFE8B8; }
+  .family-product-dot {
+    width: 5px; height: 5px;
+    background: currentColor;
+    border-radius: 50%;
+  }
+  .graph-viz {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-top: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .moat-quote {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 400;
+    color: var(--navy-900);
+    font-style: italic;
+    letter-spacing: -0.01em;
+    max-width: 720px;
+  }
+</style>
+</head>
+<body data-page="home">
+
+<div class="product-family-bar">
+  <div class="family-inner">
+    <div class="family-products">
+      <span class="family-product"><span class="family-product-dot"></span>PriceCortex</span>
+      <span class="family-product current"><span class="family-product-dot"></span>GuestGraph</span>
+      <span class="family-product"><span class="family-product-dot"></span>FolioLens</span>
+    </div>
+    <div style="opacity: 0.7; font-family: var(--font-mono);">The Buildd From Ideas family · 3 products, 1 mission</div>
+  </div>
+</div>
+
+<div id="site-nav"></div>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-pretitle">
+        <span class="eyebrow">GuestGraph · Reputation × Revenue intelligence</span>
+      </div>
+      <h1 class="display-xl mb-6" style="max-width: 940px;">
+        Every review, mapped to the <span class="italic">guest</span> who wrote it, what they <span class="italic">paid</span>, and what they <span class="italic">stayed in</span>.
+      </h1>
+      <p style="font-size: 19px; color: var(--ink-soft); max-width: 720px; margin-bottom: 32px;">
+        Medallia gives you a list of reviews. GuestGraph gives you the graph that connects them — to stays, rates, rooms, staff, tickets, and revenue. So your replies sound human, your operations get sharper, and your owner finally knows what reputation is <em>worth</em>.
+      </p>
+      <div class="flex gap-3">
+        <a href="pages/dashboard.html" class="btn btn-primary">View live demo →</a>
+        <a href="#how" class="btn btn-secondary">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-3 gap-8">
+        <div>
+          <div class="eyebrow mb-4">01 · The reply pipeline</div>
+          <h3 class="display-sm mb-4">Replies in your <span class="italic">voice</span></h3>
+          <p class="text-soft" style="font-size: 14px; line-height: 1.7;">Every review gets drafted, tiered by risk, and queued for the right person. Low-risk replies post in 4 hours. High-risk reviews go straight to the GM. No "thanks for your feedback" energy.</p>
+        </div>
+        <div>
+          <div class="eyebrow mb-4">02 · The request pipeline</div>
+          <h3 class="display-sm mb-4">Special requests, <span class="italic">closed-loop</span></h3>
+          <p class="text-soft" style="font-size: 14px; line-height: 1.7;">Forward your special-request inbox once. We extract intent, push to your GM on WhatsApp with a 1-tap approve, schedule a 9 AM front-desk reminder, and check post-stay if it landed.</p>
+        </div>
+        <div>
+          <div class="eyebrow mb-4">03 · The analytics pipeline</div>
+          <h3 class="display-sm mb-4">Action items, not <span class="italic">charts</span></h3>
+          <p class="text-soft" style="font-size: 14px; line-height: 1.7;">"Replace carpet in room 105 — 3 guests, 2 platforms, 14 days. $1,800 revenue at risk if ignored. Carpet replacement pays back in 28 days." That's a finding. Not a sentiment graph.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);" id="how">
+    <div class="container">
+      <div class="eyebrow mb-4">The graph is the moat</div>
+      <h2 class="display-lg mb-8" style="max-width: 760px;">We don't just <span class="italic">read</span> your reviews. We have full extranet access to the channels that <span class="italic">produce</span> them.</h2>
+      <div class="grid grid-2 gap-8">
+        <div>
+          <p style="font-size: 16px; line-height: 1.7;">Medallia, Reputation.com, Birdeye — they all read reviews from APIs. They see what guests wrote.</p>
+          <p style="font-size: 16px; line-height: 1.7; margin-top: 16px;">GuestGraph sees what guests <em>paid</em>. What promo they booked under. Which room. Which staff member was on shift. What our compset charged that night. Whether the AC ticket was already open.</p>
+          <p style="font-size: 16px; line-height: 1.7; margin-top: 16px;"><strong>That's not a feature. That's a different category of product.</strong></p>
+          <div class="moat-quote mt-8">
+            "PriceCortex sets the price. GuestGraph earns the trust. FolioLens shows the owner the score."
+          </div>
+        </div>
+        <div class="card card-padded" style="background: var(--cream-dark);">
+          <div class="eyebrow mb-4">Belmont Inn · 12 months on GuestGraph</div>
+          <div class="grid grid-2 gap-6 mb-6">
+            <div class="stat">
+              <div class="stat-value">8.6</div>
+              <div class="stat-label">Composite rating <span class="delta-up">↑ from 7.8</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">#6</div>
+              <div class="stat-label">Booking compset rank <span class="delta-up">↑ from #14</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">100%</div>
+              <div class="stat-label">Reply rate <span class="delta-up">↑ from 11%</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">$31.4K</div>
+              <div class="stat-label">Revenue from rep lift</div>
+            </div>
+          </div>
+          <a href="pages/dashboard.html" class="btn btn-primary w-full" style="justify-content: center;">Open Belmont's dashboard →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="text-center mb-8">
+        <div class="eyebrow mb-4">Six surfaces · one graph</div>
+        <h2 class="display-lg" style="max-width: 720px; margin: 0 auto;">Everyone gets the right information on the right channel.</h2>
+      </div>
+      <div class="grid grid-3 gap-4">
+        <a href="pages/dashboard.html" class="card card-padded" style="text-decoration: none; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div class="eyebrow mb-2">For owners</div>
+          <h3 class="display-sm mb-2">Live dashboard</h3>
+          <p class="text-soft" style="font-size: 13px;">Real-time rating, ranking, action items, and chatbot — login from anywhere.</p>
+        </a>
+        <a href="pages/actions.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div class="eyebrow mb-2">For owners</div>
+          <h3 class="display-sm mb-2">Action items</h3>
+          <p class="text-soft" style="font-size: 13px;">Carpet in 105. AC in 214. Mobile Deal cohort. With cost, ROI, and payback.</p>
+        </a>
+        <a href="pages/chatbot.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div class="eyebrow mb-2">For owners</div>
+          <h3 class="display-sm mb-2">Ask GuestGraph</h3>
+          <p class="text-soft" style="font-size: 13px;">"Why did September dip?" Ask in plain English. Get answers grounded in your graph.</p>
+        </a>
+        <a href="pages/team.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div class="eyebrow mb-2">For your ops team</div>
+          <h3 class="display-sm mb-2">Reply queue</h3>
+          <p class="text-soft" style="font-size: 13px;">Every review tiered. Drafted in your voice. 1-tap to approve, send to GM, or edit.</p>
+        </a>
+        <a href="pages/whatsapp.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div class="eyebrow mb-2">For your GM</div>
+          <h3 class="display-sm mb-2">WhatsApp alerts</h3>
+          <p class="text-soft" style="font-size: 13px;">Special requests, service recovery, and high-risk reviews — with 1-tap actions.</p>
+        </a>
+        <a href="pages/report.html" class="card card-padded" style="text-decoration: none;" onmouseover="this.style.borderColor='var(--navy-900)'" onmouseout="this.style.borderColor='var(--line)'">
+          <div class="eyebrow mb-2">For owners</div>
+          <h3 class="display-sm mb-2">Monthly report</h3>
+          <p class="text-soft" style="font-size: 13px;">Auto-generated, board-ready PDF in the Buildd partnership format owners already trust.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background: var(--cream-dark);">
+    <div class="container">
+      <div class="text-center mb-8">
+        <div class="eyebrow mb-4">The product family</div>
+        <h2 class="display-lg" style="max-width: 720px; margin: 0 auto;">Three products. One platform. Every revenue lever a hotel has.</h2>
+      </div>
+      <div class="grid grid-3 gap-4">
+        <div class="card card-padded">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px; background: var(--blue-accent);">P</span>
+            <span style="font-family: var(--font-display); font-size: 17px; font-weight: 500;">PriceCortex</span>
+          </div>
+          <p class="text-soft" style="font-size: 13px; line-height: 1.6;">Neural-network dynamic pricing. Sets the right rate for every room, every day, every channel — based on demand signals, compset, and your conversion funnel.</p>
+          <div class="eyebrow mt-4" style="color: var(--blue-accent);">Sets the price</div>
+        </div>
+        <div class="card card-padded" style="border-color: var(--navy-900); border-width: 2px;">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px;">G</span>
+            <span style="font-family: var(--font-display); font-size: 17px; font-weight: 500;">GuestGraph</span>
+            <span class="pill pill-blue" style="margin-left: auto;">New</span>
+          </div>
+          <p class="text-soft" style="font-size: 13px; line-height: 1.6;">Reputation × Revenue intelligence. Maps every review to a guest, a stay, a rate, a room. Tiered replies, special-request automation, and action items that actually <em>act</em>.</p>
+          <div class="eyebrow mt-4" style="color: var(--navy-900);">Earns the trust</div>
+        </div>
+        <div class="card card-padded">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px; background: #6B47B8;">F</span>
+            <span style="font-family: var(--font-display); font-size: 17px; font-weight: 500;">FolioLens</span>
+          </div>
+          <p class="text-soft" style="font-size: 13px; line-height: 1.6;">The owner's command center. Every property, every channel, every metric in one place. PriceCortex and GuestGraph both report up to FolioLens.</p>
+          <div class="eyebrow mt-4" style="color: #6B47B8;">Shows the score</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="card" style="background: var(--navy-900); color: var(--cream); padding: 64px 48px; border: none;">
+        <div class="eyebrow mb-4" style="color: var(--cream-dark); opacity: 0.7;">The Medallia moment</div>
+        <h2 class="display-lg mb-6" style="max-width: 820px; color: var(--cream);">Medallia just got handed to its lenders for a <span class="italic">$5.1B</span> equity wipeout.</h2>
+        <p style="font-size: 17px; line-height: 1.7; max-width: 780px; opacity: 0.85; margin-bottom: 24px;">They built a feedback aggregator and called it intelligence. We built a Reputation × Revenue graph, and we did it with the one thing they can't replicate: full extranet access through hands-on revenue management of every property we serve.</p>
+        <div class="flex gap-3">
+          <a href="pages/dashboard.html" class="btn" style="background: var(--cream); color: var(--navy-900);">See the difference →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="assets/chrome.js"></script>
+</body>
+</html>

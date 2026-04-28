@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team queue · Belmont · GuestGraph</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<script>const BASE = '../';</script>
+<style>
+  .queue-hero { padding: 32px 0 24px; border-bottom: 1px solid var(--line); }
+  .tier-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .tier-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+  }
+  .review-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .review-card.tier-3 { border-color: var(--red); border-left: 3px solid var(--red); }
+  .review-card.tier-2 { border-left: 3px solid var(--amber); }
+  .review-card.tier-1 { border-left: 3px solid var(--green); }
+  .review-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .review-text {
+    background: var(--cream);
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+  }
+  .review-text-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .draft-reply {
+    background: var(--blue-bg);
+    border-left: 3px solid var(--blue-accent);
+    padding: 14px 16px;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-bottom: 12px;
+  }
+  .draft-reply .review-text-label { color: var(--blue-accent); }
+  .pattern-flag {
+    background: var(--amber-bg);
+    border-left: 3px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .escalation-flag {
+    background: var(--red-bg);
+    border-left: 3px solid var(--red);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .stay-context { font-size: 12px; color: var(--ink-mute); }
+</style>
+</head>
+<body data-page="team">
+
+<div id="site-nav"></div>
+
+<main class="container">
+  <section class="queue-hero">
+    <div class="breadcrumb mono" style="color: var(--ink-mute); margin-bottom: 8px;">Belmont Inn & Suites <span style="color: var(--navy-900);">/ Team queue</span></div>
+    <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="eyebrow mb-2">Reply approval workflow</div>
+        <h1 class="display-lg">8 reviews pending.</h1>
+        <p class="text-soft mt-2">Tiered by risk. Drafted in Robert's voice. Approve in 30 seconds each.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="tier-summary">
+    <div class="tier-card">
+      <div class="flex items-center justify-between">
+        <span class="pill pill-green">Tier 1 · auto-post</span>
+        <span class="mono text-mute" style="font-size: 11px;">low-risk</span>
+      </div>
+      <div class="stat-value mt-2" style="font-size: 28px;">5</div>
+      <div class="stat-label mt-1">1-tap to post · 4-hr delay</div>
+    </div>
+    <div class="tier-card">
+      <div class="flex items-center justify-between">
+        <span class="pill pill-amber">Tier 2 · junior approves</span>
+        <span class="mono text-mute" style="font-size: 11px;">medium</span>
+      </div>
+      <div class="stat-value mt-2" style="font-size: 28px;">2</div>
+      <div class="stat-label mt-1">read, edit, post in 24h</div>
+    </div>
+    <div class="tier-card" style="border-color: var(--red);">
+      <div class="flex items-center justify-between">
+        <span class="pill pill-red">Tier 3 · GM only</span>
+        <span class="mono text-mute" style="font-size: 11px;">high-risk</span>
+      </div>
+      <div class="stat-value mt-2" style="font-size: 28px;">1</div>
+      <div class="stat-label mt-1">escalated, awaiting GM</div>
+    </div>
+  </div>
+
+  <section style="padding: 8px 0 64px;">
+    <div class="review-card tier-1">
+      <div class="review-meta">
+        <span class="pill pill-green">Tier 1 · auto-post</span>
+        <span class="mono text-mute" style="font-size: 11px;">Booking · 1 hr ago</span>
+      </div>
+      <div class="flex items-center justify-between mb-3" style="flex-wrap: wrap; gap: 8px;">
+        <div style="font-weight: 500;">Sarah K. · 9.5 / 10</div>
+        <div class="stay-context">Stay Apr 21–23 · Room 304 · ADR $142 · Direct rate</div>
+      </div>
+      <div class="review-text">
+        <div class="review-text-label">Review</div>
+        <div style="font-size: 14px; line-height: 1.6; font-style: italic;">"Maria at the front desk made our stay. Already booked again for July."</div>
+      </div>
+      <div class="draft-reply">
+        <div class="review-text-label">Draft reply · in Robert's voice</div>
+        <div style="font-size: 14px; line-height: 1.6; color: var(--navy-900);">Sarah — that means a lot, and I'll pass it on to Maria. See you in July.<br>— Robert</div>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-primary btn-sm">Post now</button>
+        <button class="btn btn-secondary btn-sm">Edit</button>
+        <button class="btn btn-secondary btn-sm">Send to GM</button>
+      </div>
+    </div>
+
+    <div class="review-card tier-2">
+      <div class="review-meta">
+        <span class="pill pill-amber">Tier 2 · junior approves</span>
+        <span class="mono text-mute" style="font-size: 11px;">Expedia · 3 hrs ago</span>
+      </div>
+      <div class="flex items-center justify-between mb-3" style="flex-wrap: wrap; gap: 8px;">
+        <div style="font-weight: 500;">Mark T. · 3 / 5</div>
+        <div class="stay-context">Stay Apr 19–20 · Room 214 · ADR $98 · Mobile Deal -15%</div>
+      </div>
+      <div class="review-text">
+        <div class="review-text-label">Review</div>
+        <div style="font-size: 14px; line-height: 1.6; font-style: italic;">"Room was clean but AC struggled on the hot night. Front desk was friendly though."</div>
+      </div>
+      <div class="pattern-flag">
+        <strong style="color: var(--amber);">Pattern match:</strong> 3rd AC mention this month, all rooms 210–220. HVAC ticket reopened.
+      </div>
+      <div class="draft-reply">
+        <div class="review-text-label">Draft reply · edit before posting</div>
+        <div style="font-size: 14px; line-height: 1.6; color: var(--navy-900);">Mark — you're right, and I owe you a straight answer: the AC unit on that floor's been giving us trouble in the heat. We've got the technician booked for next week, so this won't be your experience next time. Glad the front desk took care of you, at least. Hope you'll give us another shot.<br>— Robert</div>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <button class="btn btn-primary btn-sm">Approve & post</button>
+        <button class="btn btn-secondary btn-sm">Edit</button>
+        <button class="btn btn-secondary btn-sm">Regenerate</button>
+        <button class="btn btn-secondary btn-sm">Send to GM</button>
+      </div>
+    </div>
+
+    <div class="review-card tier-3">
+      <div class="review-meta">
+        <span class="pill pill-red">Tier 3 · GM only</span>
+        <span class="mono text-mute" style="font-size: 11px;">TripAdvisor · 5 hrs ago · auto-escalated</span>
+      </div>
+      <div class="flex items-center justify-between mb-3" style="flex-wrap: wrap; gap: 8px;">
+        <div style="font-weight: 500;">Jennifer L. · 1 / 5</div>
+        <div class="stay-context">Stay Apr 15–17 · Room 218 · ADR $112 · Prior complaint</div>
+      </div>
+      <div class="review-text">
+        <div class="review-text-label">Review</div>
+        <div style="font-size: 14px; line-height: 1.6; font-style: italic;">"Worst stay ever. AC didn't work, called front desk three times, no one came. We had to leave early. I'm disputing the charge with my credit card."</div>
+      </div>
+      <div class="escalation-flag">
+        <strong style="color: var(--red);">Escalated · GM action required.</strong> Mentions chargeback. Same room as recurring AC issue. Reply hidden from junior staff.
+      </div>
+      <div class="review-text" style="background: var(--cream-dark);">
+        <div class="review-text-label">Draft · pending GM review</div>
+        <div style="font-size: 13px; color: var(--ink-mute); font-style: italic;">Reply not visible to junior staff. GM will review and approve.</div>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-primary btn-sm">Ping GM ↗</button>
+        <button class="btn btn-secondary btn-sm">Show full stay history</button>
+      </div>
+    </div>
+
+    <div class="text-center mt-6">
+      <button class="btn btn-secondary">Show 5 more · Tier 1 auto-post ready →</button>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="../assets/chrome.js"></script>
+</body>
+</html>
