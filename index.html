@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Properties · PulsePilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shared.css">
+<style>
+/* ==== LIVE TICKER ==== */
+.ticker{
+  background:linear-gradient(90deg, #0A1628 0%, #1a2942 50%, #0A1628 100%);
+  color:#fff;
+  padding:9px 0;
+  overflow:hidden;
+  position:relative;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.3px;
+}
+.ticker::before{
+  content:'⚡ LIVE';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  color:#fff;
+  padding:0 16px;
+  display:flex;align-items:center;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  z-index:10;
+  border-right:1px solid rgba(255,255,255,0.2);
+}
+.ticker::after{
+  content:'';
+  position:absolute;
+  left:60px;top:0;bottom:0;width:30px;
+  background:linear-gradient(90deg,#0A1628,transparent);
+  z-index:9;
+}
+.ticker-track{
+  display:flex;
+  gap:36px;
+  white-space:nowrap;
+  padding-left:80px;
+  animation:scrollTicker 90s linear infinite;
+  width:max-content;
+}
+.ticker-item{
+  display:inline-flex;align-items:center;gap:6px;
+  color:rgba(255,255,255,0.85);
+}
+.ticker-icon{font-size:13px;font-weight:700}
+@keyframes scrollTicker{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+
+/* ==== ANIMATED HEADER ==== */
+.page-header{position:relative;overflow:hidden}
+.page-header::before{
+  content:'';
+  position:absolute;
+  top:-50%;right:-10%;
+  width:380px;height:380px;
+  background:radial-gradient(circle,rgba(6,217,176,0.06) 0%,transparent 70%);
+  animation:floatBlob 14s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes floatBlob{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-30px,20px) scale(1.1)}
+}
+
+/* ==== SUMMARY CARDS WITH ANIMATIONS ==== */
+.summary-row{padding:0 32px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:2}
+.sum-card{
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px 18px;
+  position:relative;
+  overflow:hidden;
+  transition:all .25s;
+}
+.sum-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  animation:shimmer 4s ease-in-out infinite;
+}
+.sum-card:nth-child(2)::before{animation-delay:1s}
+.sum-card:nth-child(3)::before{animation-delay:2s}
+.sum-card:nth-child(4)::before{animation-delay:3s}
+@keyframes shimmer{
+  0%,100%{left:-100%}
+  50%{left:100%}
+}
+.sum-card:hover{
+  border-color:var(--text);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(10,22,40,0.08);
+}
+.sum-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sum-card-tag{
+  font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  padding:2px 7px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;
+}
+.sum-num{
+  font-size:34px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--text);
+  line-height:1;
+  letter-spacing:-1.5px;
+  display:flex;align-items:baseline;gap:3px;
+}
+.sum-num.warn{color:var(--amber)}
+.sum-num.red{color:var(--red)}
+.sum-num small{font-size:14px;color:var(--text-faint);font-weight:500}
+.sum-lbl{font-size:9px;color:var(--text-faint);letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;font-weight:600}
+.sum-sub{font-size:10px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;margin-top:4px}
+.sum-trend{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+.sum-trend.down{color:var(--green)}
+.sum-trend.up{color:var(--red)}
+
+/* ==== PROPERTY LIST ==== */
+.prop-list{padding:0 32px 24px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:2}
+
+.prop-row{
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px 22px;
+  display:grid;
+  grid-template-columns:1.7fr 0.8fr 0.9fr 0.7fr 0.7fr 0.7fr 0.6fr auto;
+  gap:18px;
+  align-items:center;
+  text-decoration:none;color:inherit;
+  transition:all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  position:relative;
+  overflow:hidden;
+  opacity:0;
+  animation:slideIn 0.5s ease-out forwards;
+}
+.prop-row::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,rgba(6,184,148,0.04),transparent);
+  transform:translateX(-100%);
+  transition:transform 0.5s;
+  pointer-events:none;
+}
+.prop-row:hover{
+  border-color:var(--text);
+  transform:translateX(4px);
+  box-shadow:0 8px 24px rgba(10,22,40,0.08);
+}
+.prop-row:hover::after{transform:translateX(100%)}
+.prop-row:hover .prop-cta{transform:translateX(4px);color:var(--cyan)}
+.prop-row:hover .sparkline polyline{stroke-width:2.5}
+.prop-row.urgent{border-left:3px solid var(--red)}
+.prop-row.medium{border-left:3px solid var(--amber)}
+.prop-row.hermitage-glow{
+  border-color:var(--violet);
+  background:linear-gradient(135deg,rgba(109,84,224,0.02),rgba(6,184,148,0.02));
+  box-shadow:0 0 0 1px rgba(109,84,224,0.1);
+}
+.prop-row.hermitage-glow::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  padding:1px;
+  background:linear-gradient(135deg,rgba(109,84,224,0.3),rgba(6,184,148,0.3));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  pointer-events:none;
+  animation:rotateBorder 8s linear infinite;
+}
+@keyframes rotateBorder{
+  0%{filter:hue-rotate(0deg)}
+  100%{filter:hue-rotate(360deg)}
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.prop-row:nth-child(1){animation-delay:0.05s}
+.prop-row:nth-child(2){animation-delay:0.10s}
+.prop-row:nth-child(3){animation-delay:0.15s}
+.prop-row:nth-child(4){animation-delay:0.20s}
+.prop-row:nth-child(5){animation-delay:0.25s}
+.prop-row:nth-child(6){animation-delay:0.30s}
+.prop-row:nth-child(7){animation-delay:0.35s}
+.prop-row:nth-child(8){animation-delay:0.40s}
+.prop-row:nth-child(9){animation-delay:0.45s}
+.prop-row:nth-child(10){animation-delay:0.50s}
+.prop-row:nth-child(11){animation-delay:0.55s}
+
+.prop-main{min-width:0}
+.prop-name-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pulse-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  position:relative;
+}
+.pulse-dot.urgent{background:var(--red);animation:pulseDot 1.4s ease-in-out infinite}
+.pulse-dot.medium{background:var(--amber);animation:pulseDot 2s ease-in-out infinite}
+.pulse-dot::after{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  border-radius:50%;
+  background:inherit;
+  opacity:0.4;
+  animation:pulseRing 1.4s ease-out infinite;
+}
+.pulse-dot.medium::after{animation-duration:2s}
+@keyframes pulseDot{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.7;transform:scale(0.9)}
+}
+@keyframes pulseRing{
+  0%{transform:scale(1);opacity:0.4}
+  100%{transform:scale(2);opacity:0}
+}
+.prop-name{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.2px}
+.prop-demo{color:var(--violet);font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;font-style:italic;margin-left:4px}
+.prop-meta{font-size:11px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.prop-brand-tag{
+  font-size:9px;padding:2px 6px;
+  background:var(--s2);color:var(--text-mute);
+  border-radius:4px;font-weight:700;letter-spacing:0.5px;
+}
+
+.prop-stat,.prop-stat-rating{text-align:center}
+.prop-stat.pending.zero .ps-num{color:var(--text-faint)}
+.prop-stat.pending:not(.zero) .pending-num{
+  color:var(--amber);
+  position:relative;
+}
+.prop-stat.pending:not(.zero) .pending-num::before{
+  content:'';
+  position:absolute;
+  inset:-4px -8px;
+  border-radius:6px;
+  background:radial-gradient(circle,rgba(217,119,6,0.12),transparent 70%);
+  animation:glow 2s ease-in-out infinite;
+  pointer-events:none;
+  z-index:-1;
+}
+@keyframes glow{
+  0%,100%{opacity:0.5}
+  50%{opacity:1}
+}
+.ps-num{
+  font-size:22px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--text);line-height:1;
+  letter-spacing:-0.5px;
+}
+.ps-num small{font-size:11px;color:var(--text-faint);font-weight:500}
+.ps-num-sm{font-size:13px;font-weight:700;color:var(--text-mute);font-family:'JetBrains Mono',monospace}
+.ps-num-sm small{font-size:9px;color:var(--text-faint);font-weight:500;margin-left:3px;text-transform:uppercase;letter-spacing:1px}
+.ps-lbl{font-size:8px;color:var(--text-faint);letter-spacing:1px;text-transform:uppercase;margin-top:4px;font-weight:600}
+
+.sparkline polyline{
+  transition:all 0.3s;
+  stroke-dasharray:200;
+  stroke-dashoffset:200;
+  animation:drawSpark 1.5s ease-out forwards;
+}
+@keyframes drawSpark{
+  to{stroke-dashoffset:0}
+}
+
+.prop-cta{
+  font-size:14px;color:var(--text-faint);font-weight:700;
+  transition:all .25s;
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--s2);
+}
+.prop-row:hover .prop-cta{background:var(--cyan);color:#fff}
+
+/* ==== ACTIVITY FEED ==== */
+.activity-section{padding:0 32px 24px}
+.activity-feed{
+  background:linear-gradient(135deg, #0A1628 0%, #1a2942 100%);
+  border-radius:14px;
+  padding:24px 28px;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.activity-feed::before{
+  content:'';
+  position:absolute;
+  top:0;right:0;
+  width:300px;height:100%;
+  background:radial-gradient(ellipse at top right,rgba(123,97,255,0.2) 0%,transparent 60%);
+  pointer-events:none;
+}
+.act-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;position:relative;z-index:1}
+.act-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:0.5px;display:flex;align-items:center;gap:10px}
+.act-title::before{content:'';width:3px;height:14px;background:var(--cyan-bright);border-radius:2px}
+
+.act-feed-window{
+  height:240px;
+  overflow:hidden;
+  position:relative;
+  mask:linear-gradient(180deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+  -webkit-mask:linear-gradient(180deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+}
+.act-list{
+  display:flex;flex-direction:column;gap:10px;
+  animation:scrollFeed 30s linear infinite;
+}
+@keyframes scrollFeed{
+  0%{transform:translateY(0)}
+  100%{transform:translateY(-50%)}
+}
+.act-item{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 14px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;
+  font-size:12px;
+  flex-shrink:0;
+}
+.act-icon{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+  background:rgba(255,255,255,0.08);
+  flex-shrink:0;
+}
+.act-msg{flex:1;color:rgba(255,255,255,0.85);font-family:'JetBrains Mono',monospace}
+.act-time{font-size:10px;color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px}
+
+/* ==== FLOATING TOAST (periodic) ==== */
+.float-toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--text);color:#fff;
+  padding:14px 20px;border-radius:12px;
+  font-size:12px;font-weight:600;
+  box-shadow:0 12px 32px rgba(10,22,40,0.3);
+  display:flex;align-items:center;gap:12px;
+  z-index:500;
+  opacity:0;
+  transform:translateY(20px);
+  pointer-events:none;
+  transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width:340px;
+}
+.float-toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.float-toast-icon{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--cyan-bright);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:#001a14;
+  flex-shrink:0;
+}
+.float-toast-body{flex:1;min-width:0}
+.float-toast-title{font-size:11px;color:var(--cyan-bright);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+.float-toast-msg{color:#fff;font-size:12px;line-height:1.4}
+
+@media (max-width:1100px){
+  .summary-row{grid-template-columns:repeat(2,1fr)}
+  .prop-row{grid-template-columns:1fr;text-align:left}
+  .prop-stat,.prop-stat-rating{text-align:left;display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--s3)}
+  .ps-lbl{margin-top:0}
+  .prop-cta{display:none}
+  .sparkline{width:100px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="properties.html" class="nav-brand"><span class="nav-brand-mark">B</span>BUILDD</a>
+  <span class="nav-product"><span class="pp-brand">PulsePilot</span> <span class="nav-internal-tag">INTERNAL</span></span>
+  <div class="nav-links">
+    <a href="properties.html" class="active">Properties</a>
+    <a href="import.html">Import</a>
+    <a href="#">Reports</a>
+    <span class="nav-user">RM · Buildd Team</span>
+  </div>
+</nav>
+
+<!-- LIVE TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.0 · Quality Inn & Suites Capitola</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>4 new reviews imported · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 9.2 · Hermitage Hotel</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 9.2 · City Center Inn Newport News</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Quality Inn & Suites Capitola</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Tier 1 batch approved (8) · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--blue)">⏱</span>GM responded in 16 min · Comfort Inn & Suites</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Quality Inn</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.5 · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>4 new reviews imported · Clarion Inn Strasburg - Lancaster</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Tier 1 batch approved (2) · Hermitage Hotel</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--blue)">⏱</span>GM responded in 16 min · Clarion Inn Strasburg - Lancaster</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>11 new reviews imported · Comfort Inn & Suites Wyomissing</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Reply posted to Agoda · Comfort Inn & Suites Harrisburg</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>3 new reviews imported · City Center Inn Newport News</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--red)">⚑</span>Tier 3 flagged for GM · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Comfort Inn & Suites Harrisburg</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--red)">⚑</span>Tier 3 flagged for GM · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Quality Inn</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Comfort Inn & Suites Wyomissing</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>6 new reviews imported · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · City Center Inn Newport News</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.2 · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.2 · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--blue)">⏱</span>GM responded in 10 min · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Reply posted to Expedia · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Tier 1 batch approved (6) · Comfort Inn & Suites Harrisburg</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Hermitage Hotel</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.0 · Quality Inn & Suites Capitola</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>4 new reviews imported · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 9.2 · Hermitage Hotel</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 9.2 · City Center Inn Newport News</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Quality Inn & Suites Capitola</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Tier 1 batch approved (8) · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--blue)">⏱</span>GM responded in 16 min · Comfort Inn & Suites</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Quality Inn</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.5 · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>4 new reviews imported · Clarion Inn Strasburg - Lancaster</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Tier 1 batch approved (2) · Hermitage Hotel</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--blue)">⏱</span>GM responded in 16 min · Clarion Inn Strasburg - Lancaster</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>11 new reviews imported · Comfort Inn & Suites Wyomissing</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Reply posted to Agoda · Comfort Inn & Suites Harrisburg</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>3 new reviews imported · City Center Inn Newport News</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--red)">⚑</span>Tier 3 flagged for GM · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Comfort Inn & Suites Harrisburg</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--red)">⚑</span>Tier 3 flagged for GM · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--amber)">⚡</span>Magic-link email sent to GM · Quality Inn</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Comfort Inn & Suites Wyomissing</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--violet)">📥</span>6 new reviews imported · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · City Center Inn Newport News</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.2 · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">↗</span>Rating ticked up to 8.2 · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--blue)">⏱</span>GM responded in 10 min · Days Inn by Wyndham Gilroy</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Reply posted to Expedia · Quality Inn Mobile West</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--green)">✓</span>Tier 1 batch approved (6) · Comfort Inn & Suites Harrisburg</span><span class="ticker-item"><span class="ticker-icon" style="color:var(--cyan)">⚡</span>AI draft generated · Hermitage Hotel</span>
+  </div>
+</div>
+
+<div class="page-header">
+  <div>
+    <div class="page-title">Properties</div>
+    <div class="page-subtitle">11 properties under management · <span class="live-pulse">REAL-TIME</span></div>
+  </div>
+  <div class="page-actions">
+    <a href="import.html" class="btn">+ Import Reviews</a>
+    <a href="#" class="btn btn-primary">Generate Monthly Reports →</a>
+  </div>
+</div>
+
+<div class="summary-row">
+  <div class="sum-card">
+    <div class="sum-card-header">
+      <span class="sum-card-tag tag-amber">URGENT</span>
+      <span class="live-pulse">LIVE</span>
+    </div>
+    <div class="sum-num warn"><span data-count="76">0</span></div>
+    <div class="sum-lbl">Pending Replies</div>
+    <div class="sum-sub">across all properties · <span class="sum-trend down">↓ -4 this hour</span></div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-card-header">
+      <span class="sum-card-tag tag-cyan">VOLUME</span>
+    </div>
+    <div class="sum-num"><span data-count="4467">0</span></div>
+    <div class="sum-lbl">Reviews Managed</div>
+    <div class="sum-sub">all-time · <span class="sum-trend up" style="color:var(--cyan)">+47 today</span></div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-card-header">
+      <span class="sum-card-tag tag-violet">PERFORMANCE</span>
+    </div>
+    <div class="sum-num"><span data-count="635">0</span></div>
+    <div class="sum-lbl">Avg GM Score</div>
+    <div class="sum-sub">portfolio-wide · out of 1000</div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-card-header">
+      <span class="sum-card-tag tag-red">ATTENTION</span>
+    </div>
+    <div class="sum-num red"><span data-count="3">0</span></div>
+    <div class="sum-lbl">Need Attention</div>
+    <div class="sum-sub">10+ replies pending</div>
+  </div>
+</div>
+
+<div class="section-hdr">
+  <div class="section-title">All Properties</div>
+  <div class="section-meta">SORTED BY URGENCY · CLICK TO ENTER WORKSPACE</div>
+</div>
+
+<div class="prop-list">
+    <a href="property.html?id=99" class="prop-row urgent hermitage-glow" data-pending="18" data-id="99">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot urgent"></span>
+          <div class="prop-name">Hermitage Hotel<span class="prop-demo"> (demo · live data)</span></div>
+        </div>
+        <div class="prop-meta">Houma, LA · 87 rooms · <span class="prop-brand-tag">Independent</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#DC2626" data-count="4.38" data-decimals="1">4.38<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,16.4 5.5,15.8 11.1,16.2 16.6,16.1 22.2,16.4 27.7,15.7 33.2,15.4 38.8,15.4 44.3,15.5 49.8,15.6 55.4,15.6 60.9,14.4 66.5,15.8 72.0,15.5" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="550">550</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="18">18</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#DC2626" data-count="385">385</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1h<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=11" class="prop-row urgent " data-pending="13" data-id="11">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot urgent"></span>
+          <div class="prop-name">Quality Inn & Suites Gilroy<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Gilroy, CA · 84 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#059669" data-count="8.31" data-decimals="1">8.31<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--red);font-weight:700">↓</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,2.8 5.5,3.1 11.1,3.0 16.6,3.0 22.2,3.1 27.7,3.5 33.2,4.6 38.8,3.3 44.3,4.8 49.8,4.5 55.4,3.7 60.9,5.0 66.5,4.8 72.0,3.9" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--red))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="371">371</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="13">13</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#059669" data-count="819">819</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1d<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=4" class="prop-row urgent " data-pending="11" data-id="4">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot urgent"></span>
+          <div class="prop-name">City Center Inn Newport News<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Newport News, VA · 124 rooms · <span class="prop-brand-tag">Independent</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#D97706" data-count="6.68" data-decimals="1">6.68<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,10.3 5.5,9.4 11.1,9.3 16.6,10.2 22.2,9.8 27.7,10.2 33.2,9.4 38.8,10.1 44.3,9.1 49.8,8.5 55.4,8.7 60.9,9.3 66.5,9.1 72.0,9.4" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="260">260</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="11">11</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#D97706" data-count="622">622</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">6h<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=12" class="prop-row medium " data-pending="8" data-id="12">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot medium"></span>
+          <div class="prop-name">Clarion Inn Strasburg - Lancaster<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Strasburg, PA · 96 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#D97706" data-count="6.58" data-decimals="1">6.58<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,10.1 5.5,10.5 11.1,10.2 16.6,9.3 22.2,10.4 27.7,10.6 33.2,9.7 38.8,10.0 44.3,10.2 49.8,9.7 55.4,9.2 60.9,9.8 66.5,8.5 72.0,8.9" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="382">382</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="8">8</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#059669" data-count="761">761</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1d<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=10" class="prop-row medium " data-pending="7" data-id="10">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot medium"></span>
+          <div class="prop-name">Quality Inn & Suites Capitola<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Capitola, CA · 108 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#D97706" data-count="5.89" data-decimals="1">5.89<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,11.7 5.5,11.3 11.1,12.6 16.6,12.4 22.2,11.9 27.7,11.8 33.2,11.7 38.8,12.0 44.3,11.9 49.8,11.6 55.4,11.2 60.9,11.1 66.5,11.4 72.0,11.4" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="432">432</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="7">7</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#059669" data-count="715">715</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1d<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=8" class="prop-row medium " data-pending="6" data-id="8">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot medium"></span>
+          <div class="prop-name">Comfort Inn & Suites Harrisburg<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Harrisburg, PA · 88 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#D97706" data-count="6.87" data-decimals="1">6.87<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,8.6 5.5,8.6 11.1,8.5 16.6,9.4 22.2,9.7 27.7,8.5 33.2,8.5 38.8,9.0 44.3,9.3 49.8,8.6 55.4,7.9 60.9,8.6 66.5,8.0 72.0,8.0" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="256">256</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="6">6</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#DC2626" data-count="484">484</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">6h<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=5" class="prop-row medium " data-pending="5" data-id="5">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          <span class="pulse-dot medium"></span>
+          <div class="prop-name">Days Inn by Wyndham Gilroy<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Gilroy, CA · 86 rooms · <span class="prop-brand-tag">Wyndham</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#D97706" data-count="6.54" data-decimals="1">6.54<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,9.8 5.5,11.0 11.1,9.5 16.6,10.1 22.2,10.0 27.7,10.5 33.2,10.6 38.8,10.3 44.3,10.3 49.8,8.9 55.4,9.4 60.9,9.1 66.5,10.1 72.0,8.9" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="458">458</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="5">5</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#059669" data-count="827">827</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1d<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=9" class="prop-row  " data-pending="4" data-id="9">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          
+          <div class="prop-name">Comfort Inn & Suites Wyomissing<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Wyomissing, PA · 72 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#059669" data-count="7.58" data-decimals="1">7.58<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,6.9 5.5,7.1 11.1,8.1 16.6,7.2 22.2,6.7 27.7,6.8 33.2,7.4 38.8,6.8 44.3,6.6 49.8,6.4 55.4,6.8 60.9,6.2 66.5,7.0 72.0,7.3" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="377">377</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="4">4</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#DC2626" data-count="490">490</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">22h<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=3" class="prop-row  " data-pending="2" data-id="3">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          
+          <div class="prop-name">Quality Inn<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Salinas, CA · 96 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#059669" data-count="7.52" data-decimals="1">7.52<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--red);font-weight:700">↓</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,6.2 5.5,5.9 11.1,5.7 16.6,5.7 22.2,5.2 27.7,5.3 33.2,5.8 38.8,5.9 44.3,6.2 49.8,5.5 55.4,6.8 60.9,6.4 66.5,7.3 72.0,6.8" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--red))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="261">261</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="2">2</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#D97706" data-count="609">609</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1d<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=2" class="prop-row  " data-pending="1" data-id="2">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          
+          <div class="prop-name">Comfort Inn & Suites<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Pottstown, PA · 78 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#D97706" data-count="5.96" data-decimals="1">5.96<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--text-faint);font-weight:700">→</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,11.3 5.5,10.8 11.1,11.0 16.6,11.4 22.2,11.0 27.7,11.2 33.2,11.1 38.8,11.4 44.3,10.4 49.8,11.4 55.4,11.3 60.9,11.4 66.5,10.7 72.0,11.3" fill="none" stroke="var(--text-faint)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--text-faint))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="574">574</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="1">1</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#D97706" data-count="604">604</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">17h<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+    <a href="property.html?id=6" class="prop-row  " data-pending="1" data-id="6">
+      <div class="prop-main">
+        <div class="prop-name-row">
+          
+          <div class="prop-name">Quality Inn Mobile West<span class="prop-demo"></span></div>
+        </div>
+        <div class="prop-meta">Mobile, AL · 102 rooms · <span class="prop-brand-tag">Choice</span></div>
+      </div>
+      <div class="prop-stat-rating">
+        <div class="ps-num" style="color:#059669" data-count="7.46" data-decimals="1">7.46<small>/10</small></div>
+        <div class="ps-lbl">Rating <span style="color:var(--green);font-weight:700">↑</span></div>
+      </div>
+      <div class="prop-stat">
+        <svg class="sparkline" width="72" height="24" viewBox="0 0 72 24">
+          <polyline points="0.0,7.5 5.5,8.5 11.1,7.7 16.6,7.8 22.2,7.4 27.7,7.3 33.2,6.9 38.8,7.3 44.3,7.9 49.8,6.5 55.4,7.0 60.9,7.3 66.5,7.1 72.0,7.4" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px var(--green))" />
+        </svg>
+        <div class="ps-lbl">14-day trend</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" data-count="546">546</div>
+        <div class="ps-lbl">Reviews</div>
+      </div>
+      <div class="prop-stat pending ">
+        <div class="ps-num pending-num" data-count="1">1</div>
+        <div class="ps-lbl">Pending</div>
+      </div>
+      <div class="prop-stat">
+        <div class="ps-num" style="color:#D97706" data-count="668">668</div>
+        <div class="ps-lbl">GM Score</div>
+      </div>
+      <div class="prop-stat last-act">
+        <div class="ps-num-sm">1h<small>ago</small></div>
+        <div class="ps-lbl">Activity</div>
+      </div>
+      <div class="prop-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+</div>
+
+<div class="section-hdr">
+  <div class="section-title">Recent Activity</div>
+  <div class="section-meta">LAST 30 ACTIONS · AUTO-REFRESHING</div>
+</div>
+
+<div class="activity-section">
+  <div class="activity-feed">
+    <div class="act-header">
+      <div class="act-title">Live Activity Stream</div>
+      <span class="live-pulse" style="color:var(--cyan-bright)">STREAMING</span>
+    </div>
+    <div class="act-feed-window">
+      <div class="act-list" id="actList"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div>BUILDD FROM IDEAS · POWERED BY <span class="pp-brand">PulsePilot</span> · Internal Operator Tool</div>
+  <div>v0.5 · last build: May 14, 2026</div>
+</footer>
+
+<!-- Floating toast -->
+<div class="float-toast" id="floatToast">
+  <div class="float-toast-icon">⚡</div>
+  <div class="float-toast-body">
+    <div class="float-toast-title">NEW ACTIVITY</div>
+    <div class="float-toast-msg" id="floatMsg">Reply posted to Booking</div>
+  </div>
+</div>
+
+<script>
+// ==== ANIMATED COUNTER ====
+function animateCounter(el, target, duration=1400, decimals=0){
+  const start = 0;
+  const startTime = performance.now();
+  function update(now){
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // ease out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = start + (target - start) * eased;
+    el.textContent = decimals > 0 ? value.toFixed(decimals) : Math.round(value).toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = decimals > 0 ? target.toFixed(decimals) : target.toLocaleString();
+  }
+  requestAnimationFrame(update);
+}
+
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseFloat(el.dataset.count);
+  const decimals = parseInt(el.dataset.decimals || 0);
+  // Save original text, start at 0
+  setTimeout(() => animateCounter(el, target, 1400, decimals), 100);
+});
+
+// ==== ACTIVITY FEED (rotating items) ====
+const FEED_ITEMS = [{"icon": "\u2197", "msg": "Rating ticked up to 8.0 \u00b7 Quality Inn & Suites Capitola", "color": "var(--green)"}, {"icon": "\ud83d\udce5", "msg": "4 new reviews imported \u00b7 Quality Inn Mobile West", "color": "var(--violet)"}, {"icon": "\u2197", "msg": "Rating ticked up to 9.2 \u00b7 Hermitage Hotel", "color": "var(--green)"}, {"icon": "\u2197", "msg": "Rating ticked up to 9.2 \u00b7 City Center Inn Newport News", "color": "var(--green)"}, {"icon": "\u26a1", "msg": "AI draft generated \u00b7 Quality Inn & Suites Capitola", "color": "var(--cyan)"}, {"icon": "\u2713", "msg": "Tier 1 batch approved (8) \u00b7 Quality Inn Mobile West", "color": "var(--green)"}, {"icon": "\u23f1", "msg": "GM responded in 16 min \u00b7 Comfort Inn & Suites", "color": "var(--blue)"}, {"icon": "\u26a1", "msg": "Magic-link email sent to GM \u00b7 Quality Inn Mobile West", "color": "var(--amber)"}, {"icon": "\u26a1", "msg": "AI draft generated \u00b7 Quality Inn", "color": "var(--cyan)"}, {"icon": "\u2197", "msg": "Rating ticked up to 8.5 \u00b7 Days Inn by Wyndham Gilroy", "color": "var(--green)"}, {"icon": "\ud83d\udce5", "msg": "4 new reviews imported \u00b7 Clarion Inn Strasburg - Lancaster", "color": "var(--violet)"}, {"icon": "\u2713", "msg": "Tier 1 batch approved (2) \u00b7 Hermitage Hotel", "color": "var(--green)"}, {"icon": "\u26a1", "msg": "Magic-link email sent to GM \u00b7 Quality Inn Mobile West", "color": "var(--amber)"}, {"icon": "\u23f1", "msg": "GM responded in 16 min \u00b7 Clarion Inn Strasburg - Lancaster", "color": "var(--blue)"}, {"icon": "\ud83d\udce5", "msg": "11 new reviews imported \u00b7 Comfort Inn & Suites Wyomissing", "color": "var(--violet)"}, {"icon": "\u2713", "msg": "Reply posted to Agoda \u00b7 Comfort Inn & Suites Harrisburg", "color": "var(--green)"}, {"icon": "\ud83d\udce5", "msg": "3 new reviews imported \u00b7 City Center Inn Newport News", "color": "var(--violet)"}, {"icon": "\u2691", "msg": "Tier 3 flagged for GM \u00b7 Days Inn by Wyndham Gilroy", "color": "var(--red)"}, {"icon": "\u26a1", "msg": "Magic-link email sent to GM \u00b7 Comfort Inn & Suites Harrisburg", "color": "var(--amber)"}, {"icon": "\u2691", "msg": "Tier 3 flagged for GM \u00b7 Days Inn by Wyndham Gilroy", "color": "var(--red)"}, {"icon": "\u26a1", "msg": "Magic-link email sent to GM \u00b7 Quality Inn", "color": "var(--amber)"}, {"icon": "\u26a1", "msg": "AI draft generated \u00b7 Comfort Inn & Suites Wyomissing", "color": "var(--cyan)"}, {"icon": "\ud83d\udce5", "msg": "6 new reviews imported \u00b7 Quality Inn Mobile West", "color": "var(--violet)"}, {"icon": "\u26a1", "msg": "AI draft generated \u00b7 City Center Inn Newport News", "color": "var(--cyan)"}, {"icon": "\u2197", "msg": "Rating ticked up to 8.2 \u00b7 Days Inn by Wyndham Gilroy", "color": "var(--green)"}, {"icon": "\u2197", "msg": "Rating ticked up to 8.2 \u00b7 Days Inn by Wyndham Gilroy", "color": "var(--green)"}, {"icon": "\u23f1", "msg": "GM responded in 10 min \u00b7 Days Inn by Wyndham Gilroy", "color": "var(--blue)"}, {"icon": "\u2713", "msg": "Reply posted to Expedia \u00b7 Quality Inn Mobile West", "color": "var(--green)"}, {"icon": "\u2713", "msg": "Tier 1 batch approved (6) \u00b7 Comfort Inn & Suites Harrisburg", "color": "var(--green)"}, {"icon": "\u26a1", "msg": "AI draft generated \u00b7 Hermitage Hotel", "color": "var(--cyan)"}];
+const TIMES = ['just now', '34s ago', '1m ago', '2m ago', '4m ago', '6m ago', '9m ago', '12m ago', '14m ago', '18m ago', '22m ago', '28m ago', '34m ago', '41m ago', '52m ago', '1h ago', '1h 12m', '1h 24m', '1h 38m', '1h 52m'];
+
+function buildActItem(item, time){
+  return `
+    <div class="act-item">
+      <div class="act-icon" style="color:${item.color}">${item.icon}</div>
+      <div class="act-msg">${item.msg}</div>
+      <div class="act-time">${time}</div>
+    </div>`;
+}
+
+const actList = document.getElementById('actList');
+let actHtml = '';
+FEED_ITEMS.slice(0, 20).forEach((item, i) => {
+  actHtml += buildActItem(item, TIMES[i % TIMES.length]);
+});
+// Duplicate for seamless loop
+actList.innerHTML = actHtml + actHtml;
+
+// ==== PERIODIC TOAST ====
+const TOAST_MESSAGES = [
+  {title: 'NEW REVIEW', msg: '⚡ 9.2/10 review just imported · Quality Inn Capitola'},
+  {title: 'REPLY POSTED', msg: '✓ AI-drafted reply posted to Booking · Hermitage'},
+  {title: 'GM FLAGGED', msg: '⚑ Tier 3 review escalated · Days Inn Gilroy'},
+  {title: 'GM RESPONDED', msg: '⏱ GM replied in 18 min · Quality Inn Salinas'},
+  {title: 'BATCH APPROVED', msg: '⚡ 8 Tier 1 replies posted · Comfort Inn Pottstown'},
+  {title: 'RATING UP', msg: '↗ Composite ticked up to 7.4/10 · Comfort Inn Harrisburg'},
+];
+let toastIdx = 0;
+const ft = document.getElementById('floatToast');
+const fm = document.getElementById('floatMsg');
+const ftTitle = ft.querySelector('.float-toast-title');
+
+function showFloatToast(){
+  const t = TOAST_MESSAGES[toastIdx % TOAST_MESSAGES.length];
+  fm.textContent = t.msg;
+  ftTitle.textContent = t.title;
+  ft.classList.add('show');
+  setTimeout(() => ft.classList.remove('show'), 4000);
+  toastIdx++;
+}
+setTimeout(showFloatToast, 3000);
+setInterval(showFloatToast, 12000);
+
+// ==== PENDING NUMBER TICK-DOWN ====
+// Periodically decrement a random property's pending count
+setInterval(() => {
+  const rows = document.querySelectorAll('.prop-row[data-pending]');
+  const activeRows = Array.from(rows).filter(r => parseInt(r.dataset.pending) > 0);
+  if (activeRows.length === 0) return;
+  
+  const row = activeRows[Math.floor(Math.random() * activeRows.length)];
+  const current = parseInt(row.dataset.pending);
+  const newVal = current - 1;
+  row.dataset.pending = newVal;
+  const pendingNum = row.querySelector('.pending-num');
+  if (pendingNum) {
+    pendingNum.textContent = newVal;
+    pendingNum.style.transition = 'all .3s';
+    pendingNum.style.transform = 'scale(1.2)';
+    pendingNum.style.color = 'var(--green)';
+    setTimeout(() => {
+      pendingNum.style.transform = 'scale(1)';
+      pendingNum.style.color = '';
+    }, 400);
+  }
+}, 7500);
+</script>
+
+</body></html>
