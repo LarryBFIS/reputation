@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Import Reviews · PulsePilot Internal</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shared.css">
+<style>
+.import-frame{max-width:780px;margin:0 auto;padding:0 32px}
+.steps{display:flex;align-items:center;justify-content:space-between;padding:24px 0;margin-bottom:8px}
+.step{display:flex;align-items:center;gap:10px;flex:1}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--s3);color:var(--text-faint);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace;flex-shrink:0;transition:all .2s}
+.step.active .step-num{background:linear-gradient(135deg,var(--cyan-bright),var(--cyan));color:#fff}
+.step.done .step-num{background:var(--green);color:#fff}
+.step-lbl{font-size:11px;font-weight:600;color:var(--text-mute);text-transform:uppercase;letter-spacing:0.5px}
+.step.active .step-lbl{color:var(--text)}
+.step-connector{flex:1;height:2px;background:var(--s3);margin:0 12px}
+
+.step-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:18px;display:none}
+.step-card.active{display:block;animation:fadeIn .3s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-card-h{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px}
+.step-card-sub{font-size:12px;color:var(--text-mute);margin-bottom:20px}
+
+.field{margin-bottom:14px}
+.field-label{font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block}
+.field-select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;font-family:inherit;cursor:pointer}
+.field-select:focus{outline:none;border-color:var(--cyan)}
+
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.platform-pick{padding:14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;background:#fff}
+.platform-pick:hover{border-color:var(--text)}
+.platform-pick.selected{border-color:var(--cyan);background:#F0FDF8}
+.platform-pick-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
+.platform-pick-info{flex:1;min-width:0}
+.platform-pick-name{font-size:13px;font-weight:700;color:var(--text)}
+.platform-pick-meta{font-size:10px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;margin-top:1px}
+
+.upload-area{border:2px dashed var(--border);border-radius:12px;padding:48px 24px;text-align:center;background:var(--s2);cursor:pointer;transition:all .2s;margin-bottom:14px}
+.upload-area:hover{border-color:var(--cyan);background:#F0FDF8}
+.upload-icon{font-size:36px;margin-bottom:12px}
+.upload-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.upload-sub{font-size:11px;color:var(--text-mute);font-family:'JetBrains Mono',monospace}
+
+.preview-results{padding:18px;background:#F0FDF8;border:1px solid #BBF7D0;border-radius:10px;margin-bottom:14px}
+.preview-h{font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.preview-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-family:'JetBrains Mono',monospace}
+.preview-stat-num{font-size:24px;font-weight:700;color:var(--text);line-height:1}
+.preview-stat-num.warn{color:var(--amber)}
+.preview-stat-num.red{color:var(--red)}
+.preview-stat-lbl{font-size:9px;color:var(--text-mute);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:600}
+
+.step-nav{display:flex;justify-content:space-between;margin-top:24px}
+
+.step-card-h .pp-brand {font-size:0.85em}
+
+@media (max-width:700px){
+  .platform-grid{grid-template-columns:1fr}
+  .preview-stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="properties.html" class="nav-brand"><span class="nav-brand-mark">B</span>BUILDD</a>
+  <span class="nav-product"><span class="pp-brand">PulsePilot</span> <span class="nav-internal-tag">INTERNAL</span></span>
+  <div class="nav-links">
+    <a href="properties.html">Properties</a>
+    <a href="import.html">Import</a>
+    <a href="#">Reports</a>
+    <span class="nav-user">RM · Buildd Team</span>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="properties.html">Properties</a>
+  <span class="sep">/</span>
+  <span class="current">Import Reviews</span>
+</div>
+
+<div class="page-header">
+  <div>
+    <div class="page-title">Import Reviews</div>
+    <div class="page-subtitle">Upload CSV/XLSX from extranet exports · or paste Google reviews</div>
+  </div>
+</div>
+
+<div class="import-frame">
+  <div class="steps">
+    <div class="step active" id="s1"><div class="step-num">1</div><div class="step-lbl">Property</div></div>
+    <div class="step-connector"></div>
+    <div class="step" id="s2"><div class="step-num">2</div><div class="step-lbl">Platform</div></div>
+    <div class="step-connector"></div>
+    <div class="step" id="s3"><div class="step-num">3</div><div class="step-lbl">Upload</div></div>
+    <div class="step-connector"></div>
+    <div class="step" id="s4"><div class="step-num">4</div><div class="step-lbl">Confirm</div></div>
+  </div>
+  
+  <!-- STEP 1: PROPERTY -->
+  <div class="step-card active" id="card-1">
+    <div class="step-card-h">Which property?</div>
+    <div class="step-card-sub">Pick from the properties you manage. <span class="pp-brand">PulsePilot</span> will route reviews to this property.</div>
+    <div class="field">
+      <label class="field-label">Property</label>
+      <select class="field-select" id="propertySelect">
+        <option value="">-- Select a property --</option>
+        <option value="99">Hermitage Hotel · Houma, LA</option>
+        <option value="11">Quality Inn & Suites Gilroy · Gilroy, CA</option>
+        <option value="4">City Center Inn Newport News · Newport News, VA</option>
+        <option value="12">Clarion Inn Strasburg - Lancaster · Strasburg, PA</option>
+        <option value="10">Quality Inn & Suites Capitola · Capitola, CA</option>
+        <option value="8">Comfort Inn & Suites Harrisburg · Harrisburg, PA</option>
+        <option value="5">Days Inn by Wyndham Gilroy · Gilroy, CA</option>
+        <option value="9">Comfort Inn & Suites Wyomissing · Wyomissing, PA</option>
+        <option value="3">Quality Inn · Salinas, CA</option>
+        <option value="2">Comfort Inn & Suites · Pottstown, PA</option>
+        <option value="6">Quality Inn Mobile West · Mobile, AL</option>
+      </select>
+    </div>
+    <div class="step-nav">
+      <a href="properties.html" class="btn">← Cancel</a>
+      <button class="btn btn-primary" onclick="goto(2)">Next: Platform →</button>
+    </div>
+  </div>
+  
+  <!-- STEP 2: PLATFORM -->
+  <div class="step-card" id="card-2">
+    <div class="step-card-h">Which platform did the reviews come from?</div>
+    <div class="step-card-sub">Different platforms export in different formats. <span class="pp-brand">PulsePilot</span> picks the right parser.</div>
+    <div class="platform-grid">
+      <div class="platform-pick" onclick="pickPlatform(this,'Booking','CSV')"><div class="platform-pick-icon" style="background:#003580">B</div><div class="platform-pick-info"><div class="platform-pick-name">Booking.com</div><div class="platform-pick-meta">CSV from extranet</div></div></div>
+      <div class="platform-pick" onclick="pickPlatform(this,'Google','PASTE')"><div class="platform-pick-icon" style="background:#4285F4">G</div><div class="platform-pick-info"><div class="platform-pick-name">Google My Business</div><div class="platform-pick-meta">Copy-paste page</div></div></div>
+      <div class="platform-pick" onclick="pickPlatform(this,'Expedia','TSV')"><div class="platform-pick-icon" style="background:#FFC72C;color:#000">E</div><div class="platform-pick-info"><div class="platform-pick-name">Expedia + family</div><div class="platform-pick-meta">TSV · includes Hotels.com</div></div></div>
+      <div class="platform-pick" onclick="pickPlatform(this,'Agoda','XLSX')"><div class="platform-pick-icon" style="background:#FF6B00">A</div><div class="platform-pick-info"><div class="platform-pick-name">Agoda</div><div class="platform-pick-meta">XLSX export</div></div></div>
+      <div class="platform-pick" onclick="pickPlatform(this,'Priceline','CSV')"><div class="platform-pick-icon" style="background:#003D7C">P</div><div class="platform-pick-info"><div class="platform-pick-name">Priceline</div><div class="platform-pick-meta">CSV · often via Expedia</div></div></div>
+      <div class="platform-pick" onclick="pickPlatform(this,'TripAdvisor','XLSX')"><div class="platform-pick-icon" style="background:#00AF87">T</div><div class="platform-pick-info"><div class="platform-pick-name">TripAdvisor / Meta</div><div class="platform-pick-meta">XLSX export</div></div></div>
+    </div>
+    <div class="step-nav">
+      <button class="btn" onclick="goto(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goto(3)">Next: Upload →</button>
+    </div>
+  </div>
+  
+  <!-- STEP 3: UPLOAD -->
+  <div class="step-card" id="card-3">
+    <div class="step-card-h">Upload the file</div>
+    <div class="step-card-sub">Drop the file you exported from the platform's extranet. Maximum 5 MB.</div>
+    <div class="upload-area" onclick="fakeUpload()">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Drop CSV / XLSX here or click to browse</div>
+      <div class="upload-sub">Booking.com_export_2026-05-13.csv · Expedia_reviews_april.tsv · etc.</div>
+    </div>
+    <div style="font-size:11px;color:var(--text-mute);text-align:center;font-family:'JetBrains Mono',monospace">Tip: download the file from extranet first, then upload here</div>
+    <div class="step-nav">
+      <button class="btn" onclick="goto(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goto(4)">Next: Confirm →</button>
+    </div>
+  </div>
+  
+  <!-- STEP 4: CONFIRM -->
+  <div class="step-card" id="card-4">
+    <div class="step-card-h">Parse complete · ready to import</div>
+    <div class="step-card-sub">Review the parsed data below. Confirm to add to the database.</div>
+    
+    <div class="preview-results">
+      <div class="preview-h">✓ Parsed successfully</div>
+      <div class="preview-stats">
+        <div><div class="preview-stat-num">47</div><div class="preview-stat-lbl">Rows Found</div></div>
+        <div><div class="preview-stat-num">44</div><div class="preview-stat-lbl">New Reviews</div></div>
+        <div><div class="preview-stat-num warn">3</div><div class="preview-stat-lbl">Duplicates Skipped</div></div>
+        <div><div class="preview-stat-num red">0</div><div class="preview-stat-lbl">Errors</div></div>
+      </div>
+    </div>
+    
+    <div style="background:var(--s2);border-radius:10px;padding:14px;font-size:12px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;line-height:1.7">
+      <strong style="color:var(--text)">Sample of what will be imported:</strong><br>
+      → Sarah K. · 9/10 · "Lovely stay" → Tier 1 (auto-post)<br>
+      → Mark T. · 4/10 · "Room not clean" → Tier 2 (review)<br>
+      → Cheryl D. · 1/10 · "Drug deal outside room" → Tier 3 (GM flag)<br>
+      → ...41 more
+    </div>
+    
+    <div class="step-nav">
+      <button class="btn" onclick="goto(3)">← Back</button>
+      <button class="btn btn-primary" onclick="finish()">✓ Confirm &amp; Import 44 Reviews</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div>BUILDD FROM IDEAS · POWERED BY <span class="pp-brand">PulsePilot</span> · Internal Operator Tool</div>
+  <div>v0.4 · last build: May 13, 2026</div>
+</footer>
+
+<div class="toast" id="toast"><div class="toast-icon">✓</div><span id="toastMsg"></span></div>
+
+<script>
+let curStep = 1;
+function goto(n){
+  document.querySelectorAll('.step-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('card-'+n).classList.add('active');
+  for(let i=1;i<=4;i++){
+    const s=document.getElementById('s'+i);
+    s.classList.remove('active','done');
+    if(i<n) s.classList.add('done');
+    if(i===n) s.classList.add('active');
+  }
+  curStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function pickPlatform(el, name, format){
+  document.querySelectorAll('.platform-pick').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function fakeUpload(){
+  showToast('File parsed in 1.2s · 47 rows found', '✓');
+  setTimeout(()=>goto(4), 900);
+}
+function showToast(msg, icon){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.querySelector('.toast-icon').textContent=icon||'✓';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+function finish(){
+  showToast('44 reviews imported · dashboard updated', '✓');
+  setTimeout(()=>window.location.href='property.html?id=99', 1400);
+}
+</script>
+
+</body></html>

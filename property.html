@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hermitage Hotel · PulsePilot Internal</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shared.css">
+<style>
+.tabs{padding:0 32px;display:flex;gap:4px;border-bottom:1px solid var(--border);background:var(--s1);position:sticky;top:53px;z-index:100}
+.tab{padding:12px 18px;background:none;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:600;color:var(--text-mute);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:8px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--cyan)}
+.tab-badge{background:var(--amber);color:#fff;font-size:10px;padding:2px 6px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-weight:700}
+.tab-content{display:none;padding:24px 32px}
+.tab-content.active{display:block}
+
+.prop-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.ps-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.ps-num-big{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text);line-height:1;letter-spacing:-0.5px}
+.ps-num-big.warn{color:var(--amber)}
+.ps-num-big.red{color:var(--red)}
+.ps-lbl-sm{font-size:9px;color:var(--text-faint);letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;font-weight:600}
+
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.toolbar-label{font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-right:4px}
+.filter-chip{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-mute);background:var(--s1);font-family:inherit;transition:all .15s}
+.filter-chip:hover{border-color:var(--text);color:var(--text)}
+.filter-chip.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+.queue{display:flex;flex-direction:column;gap:10px}
+.qrow{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px 20px}
+.qrow[data-tier="3"]{border-left:3px solid var(--red)}
+.qrow[data-tier="2"]{border-left:3px solid var(--amber)}
+.qrow[data-tier="1"]{border-left:3px solid var(--cyan)}
+.qrow-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:10px}
+.qrow-meta-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.qrow-time{font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace}
+.qrow-rating{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.5px}
+.qrow-rating small{font-size:11px;color:var(--text-faint);font-weight:500}
+.qrow-author{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.qrow-text{font-size:12px;color:var(--text-mute);line-height:1.6;font-style:italic;margin-bottom:8px;padding-left:10px;border-left:2px solid var(--s3)}
+.qrow-tags{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.qrow-draft{background:#FAFCFE;border:1px solid #E0F2FE;border-radius:8px;padding:12px}
+.qrow-draft-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.ai-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#fff;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.qrow-draft-text{width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--text);line-height:1.5;resize:vertical;background:#fff}
+.qrow-draft-text:focus{outline:none;border-color:var(--cyan)}
+.qrow-actions{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+
+.insight-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.insight-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ic-hdr{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--s2);font-size:11px;font-weight:700;color:var(--text);letter-spacing:0.5px}
+.theme-row{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:11px;border-bottom:1px solid var(--s3);cursor:pointer;transition:background .15s}
+.theme-row:hover{background:var(--s2)}
+.theme-row:last-child{border-bottom:none}
+.theme-name{width:100px;color:var(--text);text-transform:capitalize;font-weight:500;font-size:12px}
+.theme-bar-wrap{flex:1;height:12px;background:var(--s3);border-radius:3px;overflow:hidden}
+.theme-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:3px}
+.theme-count{font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;font-size:12px;min-width:30px;text-align:right}
+.plat-table{width:100%;border-collapse:collapse;font-size:12px}
+.plat-table th{text-align:left;padding:10px 18px;font-size:9px;color:var(--text-faint);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;border-bottom:1px solid var(--border)}
+.plat-table td{padding:10px 18px;border-bottom:1px solid var(--s3)}
+.plat-table tr:last-child td{border-bottom:none}
+
+.report-section{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:14px}
+.report-h{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px}
+.report-p{font-size:12px;color:var(--text-mute);line-height:1.6;margin-bottom:12px}
+
+.settings-section{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px}
+.set-h{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--s3)}
+.set-row{display:grid;grid-template-columns:200px 1fr;gap:18px;padding:10px 0;align-items:center}
+.set-label{font-size:11px;color:var(--text-mute);font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+.set-value{font-size:13px;color:var(--text)}
+.set-input{padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text);background:#fff;font-family:inherit;width:100%;max-width:400px}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}
+.toggle-switch{width:36px;height:20px;background:var(--cyan);border-radius:99px;position:relative;transition:all .15s}
+.toggle-switch::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,0.2);transition:all .15s}
+.toggle-switch.off{background:var(--s3)}
+.toggle-switch.off::after{right:auto;left:2px}
+
+@media (max-width:900px){
+  .prop-summary,.insight-grid{grid-template-columns:1fr}
+  .set-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="properties.html" class="nav-brand"><span class="nav-brand-mark">B</span>BUILDD</a>
+  <span class="nav-product"><span class="pp-brand">PulsePilot</span> <span class="nav-internal-tag">INTERNAL</span></span>
+  <div class="nav-links">
+    <a href="properties.html">Properties</a>
+    <a href="import.html">Import</a>
+    <a href="#">Reports</a>
+    <span class="nav-user">RM · Buildd Team</span>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="properties.html">Properties</a>
+  <span class="sep">/</span>
+  <span class="current">Hermitage Hotel</span>
+  <span class="sep">·</span>
+  <span style="font-size:10px">Houma, LA · 87 rooms · Independent</span>
+</div>
+
+<div class="page-header">
+  <div>
+    <div class="page-title">Hermitage Hotel</div>
+    <div class="page-subtitle">550 reviews · 5 platforms · <span class="live-pulse">last sync 14 min ago</span></div>
+  </div>
+  <div class="page-actions">
+    <a href="import.html?property=99" class="btn">+ Import Reviews</a>
+    <a href="report.html?property=99" class="btn btn-primary">Generate Report ↗</a>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('queue')">📥 Reply Queue <span class="tab-badge">14</span></button>
+  <button class="tab" onclick="showTab('insights')">📊 Insights</button>
+  <button class="tab" onclick="showTab('reports')">📄 Reports</button>
+  <button class="tab" onclick="showTab('settings')">⚙ Settings</button>
+</div>
+
+<!-- TAB: REPLY QUEUE -->
+<div class="tab-content active" id="tab-queue">
+  <div class="prop-summary">
+    <div class="ps-card"><div class="ps-num-big warn">14</div><div class="ps-lbl-sm">Pending Now</div></div>
+    <div class="ps-card"><div class="ps-num-big">13</div><div class="ps-lbl-sm">Posted Today</div></div>
+    <div class="ps-card"><div class="ps-num-big">4.2m</div><div class="ps-lbl-sm">Avg Reply Time</div></div>
+    <div class="ps-card"><div class="ps-num-big red">3</div><div class="ps-lbl-sm">Flagged → GM</div></div>
+    <div class="ps-card"><div class="ps-num-big">4.38<small style="font-size:12px">/10</small></div><div class="ps-lbl-sm">Composite</div></div>
+  </div>
+  
+  <div class="toolbar">
+    <span class="toolbar-label">Filter</span>
+    <button class="filter-chip active" onclick="filt('all', event)">All · 14</button>
+    <button class="filter-chip" onclick="filt('3', event)">⚑ Tier 3 GM · 5</button>
+    <button class="filter-chip" onclick="filt('2', event)">Tier 2 · 5</button>
+    <button class="filter-chip" onclick="filt('1', event)">Tier 1 · 4</button>
+    <span style="margin-left:auto;display:flex;gap:6px">
+      <button class="btn btn-primary btn-sm">⚡ Batch approve Tier 1</button>
+    </span>
+  </div>
+  
+  <div class="queue">
+    <div class="qrow" data-tier="2" data-idx="0">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-booking"></span>Booking</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-amber">T2 · review</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--amber)">6.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Nathan</div>
+      <div class="qrow-text">"Location / The staff"</div>
+      <div class="qrow-tags"><span class="tag tag-blue">staff</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi Nathan, thank you for your honest feedback. We have addressed your concerns with our team. We hope you'll give us another chance.\n\nSincerely,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(0)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(0)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(0)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(0)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="3" data-idx="1">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-hotels"></span>Hotels</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-red">T3 · GM flag</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--red)">2.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Matthew DeCesar</div>
+      <div class="qrow-text">"Had a horrible time, had to go to a whole different hotel. The hallways gave super creepy vibes, there was graffiti on most of the walls, not that I mind graffiti just y'know wasn't advertised. And the pictures of the room didn't really match the room, sorta felt like I was crawl"</div>
+      <div class="qrow-tags"><span class="tag tag-blue">safety</span><span class="tag tag-blue">parking</span><span class="tag tag-blue">bugs</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear Matthew, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(1)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(1)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(1)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(1)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="3" data-idx="2">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-booking"></span>Booking</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-red">T3 · GM flag</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--red)">1.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Cheryl</div>
+      <div class="qrow-text">"Location / Dirty, unpleasant staff, burn holes in bedding, makeup stains on pillow, broken elevators, broken sprinkler heads,locked fire exitsâ¦."</div>
+      <div class="qrow-tags"><span class="tag tag-blue">cleanliness</span><span class="tag tag-blue">maintenance</span><span class="tag tag-blue">staff</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear Cheryl, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(2)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(2)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(2)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(2)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="2" data-idx="3">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-amber">T2 · review</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--amber)">4.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Zane Schietinger</div>
+      <div class="qrow-text">"There were stains on the mattresses,  burns on the sheets and comforter, crumbs all over the place, a layer of dust on the hairdryer, and eveything was just generally worn. It was cheap but not sure it was worth it."</div>
+      <div class="qrow-tags"><span class="tag tag-blue">cleanliness</span><span class="tag tag-blue">maintenance</span><span class="tag tag-blue">bedding</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear Zane, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(3)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(3)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(3)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(3)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="2" data-idx="4">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-hotels"></span>Hotels</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-amber">T2 · review</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--amber)">6.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Patrilla</div>
+      <div class="qrow-text">"There was no breakfast, and the staff didn't really do their job very well at all. There was no Wi-Fi there was no what I saw on the ammunition"</div>
+      <div class="qrow-tags"><span class="tag tag-blue">staff</span><span class="tag tag-blue">breakfast</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi Patrilla, thank you for your honest feedback. We have addressed your concerns with our team. We hope you'll give us another chance.\n\nSincerely,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(4)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(4)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(4)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(4)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="2" data-idx="5">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-amber">T2 · review</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--amber)">4.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Aden Buettner</div>
+      <div class="qrow-text">"Requested a non-smoking room and received a smoking room. The elevators did not work and was on the 3rd floor. If you need to extend do it via Expedia they have much higher in house rates. The room was partially cleaned had stained floors and the table was stickey. Would not reco"</div>
+      <div class="qrow-tags"><span class="tag tag-blue">cleanliness</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear Aden, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(5)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(5)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(5)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(5)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="3" data-idx="6">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-hotels"></span>Hotels</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-red">T3 · GM flag</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--red)">2.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Paola Cuevas</div>
+      <div class="qrow-text">"First thing there you notice is the stench of smoke. Every place you looked, it was some sort of barricade and something not working. The smell was the same as you entered the room. The blankets full of holes from cigarette burns and the bathroom toilet did not work properly, it "</div>
+      <div class="qrow-tags"><span class="tag tag-blue">cleanliness</span><span class="tag tag-blue">bathroom</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear Paola, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(6)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(6)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(6)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(6)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="1" data-idx="7">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-cyan">T1 · auto-post</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--green)">8.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">kari lasanta</div>
+      <div class="qrow-text">"Ok"</div>
+      <div class="qrow-tags"></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi kari, thank you so much for your kind words! We're delighted you enjoyed your stay at Hermitage Hotel. We hope to welcome you back soon.\n\nWarm regards,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(7)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(7)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(7)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(7)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="1" data-idx="8">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">2w ago</span>
+          <span class="tag tag-cyan">T1 · auto-post</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--green)">8.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">kari lasanta</div>
+      <div class="qrow-text">"Ok"</div>
+      <div class="qrow-tags"></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi kari, thank you so much for your kind words! We're delighted you enjoyed your stay at Hermitage Hotel. We hope to welcome you back soon.\n\nWarm regards,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(8)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(8)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(8)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(8)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="2" data-idx="9">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-booking"></span>Booking</span>
+          <span class="qrow-time">3w ago</span>
+          <span class="tag tag-amber">T2 · review</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--amber)">6.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Wasim</div>
+      <div class="qrow-text">"It was convenient and close to my destination / Clean less wasn’t the best"</div>
+      <div class="qrow-tags"><span class="tag tag-blue">cleanliness</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi Wasim, thank you for your honest feedback. We have shared your feedback with our housekeeping team for immediate review. We hope you'll give us another chance.\n\nSincerely,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(9)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(9)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(9)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(9)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="3" data-idx="10">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">3w ago</span>
+          <span class="tag tag-red">T3 · GM flag</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--red)">2.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">James Martin</div>
+      <div class="qrow-text">"The buildings and surrounding parking lot appear to be condemned and abandoned on first sight (at least one of the buildings actually is condemned and boarded up w/posted notices all over it). The staff if there is one is simply unavailable and unresponsive.  The elevator in the "</div>
+      <div class="qrow-tags"><span class="tag tag-blue">cleanliness</span><span class="tag tag-blue">maintenance</span><span class="tag tag-blue">staff</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear James, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(10)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(10)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(10)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(10)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="3" data-idx="11">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">3w ago</span>
+          <span class="tag tag-red">T3 · GM flag</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--red)">2.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Trevor Smith</div>
+      <div class="qrow-text">"This place was absolutely awful and I would never recommend it to anyone ever the whole wall next to the toilet was covered in urine and piles of dirt in the room, they gave us key cards to a wrong room, the whole first and second floor hallways had a thick cigarette smog"</div>
+      <div class="qrow-tags"><span class="tag tag-blue">bathroom</span></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Dear Trevor, we are truly sorry to hear about your experience. This does not reflect our standards. Please email management@hermitage-hotel.com so we can make this right.\n\nWith sincere apologies,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(11)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(11)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(11)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(11)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="1" data-idx="12">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <span class="qrow-time">3w ago</span>
+          <span class="tag tag-cyan">T1 · auto-post</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--green)">10.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Angela Murray</div>
+      <div class="qrow-text">"Everything it was peaceful and quiet"</div>
+      <div class="qrow-tags"></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi Angela, thank you so much for your kind words! We're delighted you enjoyed your stay at Hermitage Hotel. We hope to welcome you back soon.\n\nWarm regards,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(12)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(12)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(12)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(12)">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="qrow" data-tier="1" data-idx="13">
+      <div class="qrow-head">
+        <div class="qrow-meta-left">
+          <span class="platform-pill"><span class="platform-dot pdot-booking"></span>Booking</span>
+          <span class="qrow-time">3w ago</span>
+          <span class="tag tag-cyan">T1 · auto-post</span>
+        </div>
+        <div class="qrow-rating" style="color:var(--green)">10.0<small>/10</small></div>
+      </div>
+      <div class="qrow-author">Griguts</div>
+      <div class="qrow-text">"Balcony"</div>
+      <div class="qrow-tags"></div>
+      <div class="qrow-draft">
+        <div class="qrow-draft-hdr">
+          <span class="ai-badge">⚡ AI DRAFT</span>
+          <span style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace">edit before posting</span>
+        </div>
+        <textarea class="qrow-draft-text" rows="3">Hi Griguts, thank you so much for your kind words! We're delighted you enjoyed your stay at Hermitage Hotel. We hope to welcome you back soon.\n\nWarm regards,\nHermitage Hotel</textarea>
+        <div class="qrow-actions">
+          <button class="btn btn-primary btn-sm" onclick="approve(13)">✓ Approve &amp; Post</button>
+          <button class="btn btn-sm" onclick="regen(13)">↻ Regenerate</button>
+          <button class="btn btn-violet btn-sm" onclick="flagGM(13)">⚑ Flag for GM</button>
+          <button class="btn btn-sm btn-ghost" onclick="skipR(13)">Skip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: INSIGHTS -->
+<div class="tab-content" id="tab-insights">
+  <div class="insight-grid">
+    <div class="insight-card">
+      <div class="ic-hdr">TOP COMPLAINT THEMES · among 395 negative reviews</div>
+      <div class="theme-row"><div class="theme-name">cleanliness</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:100.0%"></div></div><div class="theme-count">116</div></div><div class="theme-row"><div class="theme-name">bathroom</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:60.3448275862069%"></div></div><div class="theme-count">70</div></div><div class="theme-row"><div class="theme-name">staff</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:53.44827586206897%"></div></div><div class="theme-count">62</div></div><div class="theme-row"><div class="theme-name">bedding</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:53.44827586206897%"></div></div><div class="theme-count">62</div></div><div class="theme-row"><div class="theme-name">maintenance</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:52.58620689655172%"></div></div><div class="theme-count">61</div></div><div class="theme-row"><div class="theme-name">breakfast</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:36.206896551724135%"></div></div><div class="theme-count">42</div></div><div class="theme-row"><div class="theme-name">safety</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:18.103448275862068%"></div></div><div class="theme-count">21</div></div><div class="theme-row"><div class="theme-name">value</div><div class="theme-bar-wrap"><div class="theme-bar" style="width:17.24137931034483%"></div></div><div class="theme-count">20</div></div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-hdr">PLATFORM BREAKDOWN</div>
+      <table class="plat-table">
+        <thead><tr><th>Platform</th><th>Reviews</th><th>Avg</th><th>Reply %</th></tr></thead>
+        <tbody><tr><td><span class="platform-pill"><span class="platform-dot pdot-booking"></span>Booking</span></td><td><b>319</b></td><td style="color:var(--red);font-weight:700">3.82/10</td><td style="color:var(--amber);font-weight:700">63.9%</td></tr><tr><td><span class="platform-pill"><span class="platform-dot pdot-hotels"></span>Hotels</span></td><td><b>108</b></td><td style="color:var(--amber);font-weight:700">5.09/10</td><td style="color:var(--red);font-weight:700">0.0%</td></tr><tr><td><span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span></td><td><b>118</b></td><td style="color:var(--amber);font-weight:700">5.29/10</td><td style="color:var(--red);font-weight:700">0.0%</td></tr><tr><td><span class="platform-pill"><span class="platform-dot pdot-orbitz"></span>Orbitz</span></td><td><b>1</b></td><td style="color:var(--red);font-weight:700">2.0/10</td><td style="color:var(--red);font-weight:700">0.0%</td></tr><tr><td><span class="platform-pill"><span class="platform-dot pdot-travelocity"></span>Travelocity</span></td><td><b>3</b></td><td style="color:var(--red);font-weight:700">2.67/10</td><td style="color:var(--red);font-weight:700">0.0%</td></tr><tr><td><span class="platform-pill"><span class="platform-dot pdot-cheaptickets"></span>CheapTickets</span></td><td><b>1</b></td><td style="color:var(--amber);font-weight:700">6.0/10</td><td style="color:var(--red);font-weight:700">0.0%</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div style="margin-top:18px;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:22px">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">KEY INSIGHTS</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+      <div style="padding:14px 16px;background:#FEF2F2;border-left:3px solid var(--red);border-radius:0 8px 8px 0">
+        <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:1px;margin-bottom:4px">CLEANLINESS CRISIS</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">#1 issue across all platforms</div>
+        <div style="font-size:11px;color:var(--text-mute);line-height:1.5">116 of 395 negative reviews cite cleanliness. Stained mattresses, dust, sticky surfaces.</div>
+      </div>
+      <div style="padding:14px 16px;background:#FFFBEB;border-left:3px solid var(--amber);border-radius:0 8px 8px 0">
+        <div style="font-size:9px;color:var(--amber);font-weight:700;letter-spacing:1px;margin-bottom:4px">INFRASTRUCTURE</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">Bathroom + bedding clustering</div>
+        <div style="font-size:11px;color:var(--text-mute);line-height:1.5">70 bathroom + 62 bedding complaints. Capex case for mattress replacement.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: REPORTS -->
+<div class="tab-content" id="tab-reports">
+  <div class="report-section">
+    <div class="report-h">📄 Monthly Reports</div>
+    <div class="report-p">Generate a polished PDF report for the owner. Includes executive summary, platform performance, GM scorecard, themes, and recommended actions.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px">
+      <a href="report.html?property=99&month=2026-04" class="btn btn-primary" style="justify-content:center">Generate April 2026 →</a>
+      <a href="report.html?property=99&month=2026-03" class="btn" style="justify-content:center">Generate March 2026</a>
+      <a href="report.html?property=99&month=2026-02" class="btn" style="justify-content:center">Generate Feb 2026</a>
+    </div>
+  </div>
+  
+  <div class="report-section">
+    <div class="report-h">📚 Report History</div>
+    <div class="report-p">Every report ever generated for this property.</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--s2);border-radius:8px;font-size:12px">
+        <div><b>March 2026 Report</b> · sent to owner@hermitage.com · Apr 3</div>
+        <a href="#" class="btn btn-sm">↓ Download PDF</a>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--s2);border-radius:8px;font-size:12px">
+        <div><b>February 2026 Report</b> · sent to owner@hermitage.com · Mar 2</div>
+        <a href="#" class="btn btn-sm">↓ Download PDF</a>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--s2);border-radius:8px;font-size:12px">
+        <div><b>January 2026 Report</b> · sent to owner@hermitage.com · Feb 2</div>
+        <a href="#" class="btn btn-sm">↓ Download PDF</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: SETTINGS -->
+<div class="tab-content" id="tab-settings">
+  <div class="settings-section">
+    <div class="set-h">Property Info</div>
+    <div class="set-row"><div class="set-label">Hotel Name</div><div class="set-value"><input class="set-input" value="Hermitage Hotel"></div></div>
+    <div class="set-row"><div class="set-label">Location</div><div class="set-value"><input class="set-input" value="Houma, LA"></div></div>
+    <div class="set-row"><div class="set-label">Rooms</div><div class="set-value"><input class="set-input" value="87" style="max-width:120px"></div></div>
+    <div class="set-row"><div class="set-label">Brand Voice</div><div class="set-value"><textarea class="set-input" rows="3" style="font-family:inherit">Friendly, southern-hospitality tone. Always sign as "Hermitage Hotel Management". Reference Houma when relevant.</textarea></div></div>
+  </div>
+  
+  <div class="settings-section">
+    <div class="set-h">GM Workflow</div>
+    <div class="set-row"><div class="set-label">GM Email</div><div class="set-value"><input class="set-input" value="gm@hermitage-hotel.com"></div></div>
+    <div class="set-row"><div class="set-label">Send escalations to GM</div><div class="set-value"><div class="toggle"><div class="toggle-switch"></div><span>ON — magic-link emails at 9am daily</span></div></div></div>
+    <div class="set-row"><div class="set-label">GM Score notifications</div><div class="set-value"><div class="toggle"><div class="toggle-switch"></div><span>Weekly digest to owner</span></div></div></div>
+  </div>
+  
+  <div class="settings-section">
+    <div class="set-h">Platform Connections</div>
+    <div class="set-row"><div class="set-label">Booking.com</div><div class="set-value"><span class="tag tag-green">CONNECTED</span> · last sync 14m ago</div></div>
+    <div class="set-row"><div class="set-label">Google My Business</div><div class="set-value"><span class="tag tag-green">CONNECTED</span> · last sync 2h ago</div></div>
+    <div class="set-row"><div class="set-label">Expedia</div><div class="set-value"><span class="tag tag-green">CONNECTED</span> · last sync 6h ago</div></div>
+    <div class="set-row"><div class="set-label">Agoda</div><div class="set-value"><span class="tag tag-gray">NOT CONNECTED</span> · <a href="import.html" style="color:var(--cyan)">+ Connect</a></div></div>
+    <div class="set-row"><div class="set-label">Priceline</div><div class="set-value"><span class="tag tag-gray">NOT CONNECTED</span> · <a href="import.html" style="color:var(--cyan)">+ Connect</a></div></div>
+    <div class="set-row"><div class="set-label">TripAdvisor</div><div class="set-value"><span class="tag tag-gray">NOT CONNECTED</span> · <a href="import.html" style="color:var(--cyan)">+ Connect</a></div></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div>BUILDD FROM IDEAS · POWERED BY <span class="pp-brand">PulsePilot</span> · Internal Operator Tool</div>
+  <div>v0.4 · last build: May 13, 2026</div>
+</footer>
+
+<div class="toast" id="toast"><div class="toast-icon">✓</div><span id="toastMsg"></span></div>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function filt(t, e){
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.qrow').forEach(r=>{
+    if(t==='all'){r.style.display='block';return}
+    r.style.display = r.dataset.tier===t ? 'block' : 'none';
+  });
+}
+function showToast(msg, icon){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.querySelector('.toast-icon').textContent=icon||'✓';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+function approve(i){
+  const r=document.querySelector(`.qrow[data-idx="${i}"]`);
+  if(r){r.style.opacity='0.4';r.style.pointerEvents='none'}
+  showToast('Reply posted · timestamp logged');
+}
+function flagGM(i){
+  const r=document.querySelector(`.qrow[data-idx="${i}"]`);
+  if(r){r.style.opacity='0.4';r.style.pointerEvents='none'}
+  showToast('Flagged for GM · magic-link email sent', '⚑');
+}
+function regen(i){ showToast('Regenerating...', '↻'); }
+function skipR(i){
+  const r=document.querySelector(`.qrow[data-idx="${i}"]`);
+  if(r) r.style.display='none';
+  showToast('Skipped · reappears in 2h', '⏭');
+}
+</script>
+
+</body></html>

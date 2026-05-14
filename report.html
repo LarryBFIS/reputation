@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>April 2026 Report · Hermitage Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shared.css">
+<style>
+@media print{
+  .no-print{display:none !important}
+  body{background:#fff}
+  .report-doc{box-shadow:none !important;margin:0 !important;border-radius:0 !important}
+  .report-page{page-break-after:always}
+}
+.report-doc{max-width:880px;margin:32px auto;background:#fff;box-shadow:0 12px 40px rgba(10,22,40,0.08);border-radius:12px;overflow:hidden}
+.report-cover{background:linear-gradient(135deg,#0A1628 0%,#1a2942 100%);color:#fff;padding:60px 50px;position:relative;overflow:hidden}
+.report-cover::before{content:'';position:absolute;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse at top right,rgba(123,97,255,0.3) 0%,transparent 60%)}
+.cover-content{position:relative;z-index:1}
+.cover-brand{display:flex;align-items:center;gap:10px;margin-bottom:36px;font-size:13px;font-weight:600}
+.cover-brand-mark{width:24px;height:24px;background:linear-gradient(135deg,var(--cyan-bright),var(--violet-bright));border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800}
+.cover-pp{color:#fff;font-family:'JetBrains Mono',monospace;font-style:italic;font-weight:700;background:linear-gradient(135deg,#06D9B0,#A990FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;padding-right:9px;position:relative}
+.cover-pp::after{content:'™';position:absolute;top:0;right:0;font-size:0.55em;color:#A990FF;-webkit-text-fill-color:#A990FF;font-style:normal}
+.cover-eyebrow{font-size:11px;color:var(--cyan-bright);letter-spacing:2px;font-weight:700;margin-bottom:14px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.cover-title{font-size:48px;font-weight:700;letter-spacing:-1.5px;line-height:1.05;margin-bottom:8px}
+.cover-sub{font-size:18px;color:rgba(255,255,255,0.6);margin-bottom:36px}
+.cover-meta{display:flex;gap:28px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.15)}
+.cm-block{display:flex;flex-direction:column;gap:4px}
+.cm-lbl{font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.cm-val{font-size:14px;color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700}
+
+.report-body{padding:40px 50px}
+.section-mark{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--cyan);font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.section-mark::before{content:'';width:24px;height:1px;background:var(--cyan)}
+.section-h{font-size:24px;font-weight:700;color:var(--text);margin-bottom:18px;letter-spacing:-0.5px}
+.section-p{font-size:14px;color:var(--text-mute);line-height:1.7;margin-bottom:14px}
+
+.exec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 36px}
+.exec-card{background:var(--s2);border-radius:10px;padding:18px}
+.exec-num{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text);line-height:1;letter-spacing:-1px}
+.exec-num.amber{color:var(--amber)}
+.exec-num.red{color:var(--red)}
+.exec-num.green{color:var(--green)}
+.exec-num small{font-size:13px;color:var(--text-faint);font-weight:500}
+.exec-lbl{font-size:9px;color:var(--text-faint);letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;font-weight:700}
+.exec-sub{font-size:11px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;margin-top:4px}
+
+.divider{height:1px;background:var(--border);margin:36px 0}
+
+.plat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.plat-block{padding:16px 18px;background:var(--s2);border-radius:10px;display:flex;align-items:center;justify-content:space-between}
+.plat-block-info{display:flex;align-items:center;gap:10px}
+.plat-block-rating{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.5px}
+.plat-block-rating small{font-size:11px;color:var(--text-faint);font-weight:500}
+.plat-block-meta{font-size:10px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+.gm-scorecard{background:linear-gradient(135deg,#FAF7FF,#F0FDF8);border:1px solid #E2DAFF;border-radius:14px;padding:22px;margin-top:18px}
+.gms-top{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;margin-bottom:18px}
+.gms-num-box{text-align:center}
+.gms-num{font-size:46px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--amber);line-height:1;letter-spacing:-2px}
+.gms-num small{font-size:14px;color:var(--text-faint);font-weight:500}
+.gms-num-lbl{font-size:9px;color:var(--text-faint);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;font-weight:700}
+.gms-grade{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.gms-desc{font-size:12px;color:var(--text-mute);line-height:1.6}
+.gms-rank{text-align:center;padding-left:24px;border-left:1px solid var(--border)}
+.gms-rank-num{font-size:30px;font-weight:700;color:var(--violet);font-family:'JetBrains Mono',monospace;line-height:1}
+.gms-rank-lbl{font-size:9px;color:var(--text-faint);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;font-weight:700}
+.gms-breakdown{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gms-bd{background:#fff;border-radius:8px;padding:12px 14px}
+.gms-bd-lbl{font-size:9px;color:var(--text-faint);letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.gms-bd-num{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--amber)}
+.gms-bd-meta{font-size:10px;color:var(--text-mute);margin-top:2px}
+
+.theme-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.theme-item{padding:14px 18px;background:var(--s2);border-radius:10px;display:flex;align-items:center;gap:14px}
+.theme-item-n{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text);min-width:50px}
+.theme-item-info{flex:1}
+.theme-item-name{font-size:13px;font-weight:700;color:var(--text);text-transform:capitalize}
+.theme-item-quote{font-size:11px;color:var(--text-mute);font-style:italic;margin-top:4px;line-height:1.5}
+
+.action-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.action-item{display:flex;gap:14px;padding:16px 18px;border:1px solid var(--border);border-radius:10px;background:var(--s1)}
+.action-priority{width:28px;height:28px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.action-priority.p1{background:var(--red)}
+.action-priority.p2{background:var(--amber)}
+.action-priority.p3{background:var(--violet)}
+.action-body{flex:1}
+.action-h{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.action-d{font-size:12px;color:var(--text-mute);line-height:1.6;margin-bottom:8px}
+.action-meta{display:flex;gap:12px;font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-weight:600}
+.action-meta b{color:var(--text)}
+
+.report-footer{background:var(--s2);padding:28px 50px;border-top:1px solid var(--border)}
+.rf-grid{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.rf-brand-line{font-size:11px;color:var(--text-mute);font-family:'JetBrains Mono',monospace;line-height:1.7}
+.rf-brand-line a{color:var(--cyan);text-decoration:none}
+
+.action-bar{position:sticky;top:0;background:rgba(255,255,255,0.96);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;z-index:100;backdrop-filter:blur(12px)}
+.ab-title{font-size:13px;font-weight:700;color:var(--text)}
+.ab-actions{display:flex;gap:8px}
+
+@media (max-width:880px){
+  .report-cover{padding:36px 24px}
+  .cover-title{font-size:32px}
+  .report-body{padding:24px 22px}
+  .exec-grid{grid-template-columns:repeat(2,1fr)}
+  .plat-grid{grid-template-columns:1fr}
+  .gms-top{grid-template-columns:1fr;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="action-bar no-print">
+  <div class="ab-title">
+    <a href="property.html?id=99" style="color:var(--text-mute);text-decoration:none">← Back</a> · Preview: <span class="pp-brand">PulsePilot</span> April 2026 Report
+  </div>
+  <div class="ab-actions">
+    <button class="btn" onclick="window.print()">↓ Download PDF</button>
+    <button class="btn btn-primary" onclick="alert('Sent to owner@hermitage-hotel.com')">✉ Email to Owner</button>
+  </div>
+</div>
+
+<div class="report-doc">
+  
+  <!-- COVER -->
+  <div class="report-cover">
+    <div class="cover-content">
+      <div class="cover-brand">
+        <span class="cover-brand-mark">B</span>
+        <span>BUILDD FROM IDEAS</span>
+        <span style="color:rgba(255,255,255,0.3);margin:0 6px">·</span>
+        <span class="cover-pp">PulsePilot</span>
+      </div>
+      <div class="cover-eyebrow">REPUTATION INTELLIGENCE · MONTHLY REPORT</div>
+      <div class="cover-title">Hermitage Hotel</div>
+      <div class="cover-sub">April 2026 · Performance Summary</div>
+      <div class="cover-meta">
+        <div class="cm-block"><div class="cm-lbl">Property</div><div class="cm-val">Houma, LA · 87 rooms</div></div>
+        <div class="cm-block"><div class="cm-lbl">Reporting Period</div><div class="cm-val">Apr 1 — Apr 30, 2026</div></div>
+        <div class="cm-block"><div class="cm-lbl">Reviews Managed</div><div class="cm-val">550 (lifetime)</div></div>
+        <div class="cm-block"><div class="cm-lbl">Prepared</div><div class="cm-val">May 13, 2026</div></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="report-body">
+    
+    <!-- EXECUTIVE SUMMARY -->
+    <div class="section-mark">SECTION 01 · EXECUTIVE SUMMARY</div>
+    <div class="section-h">How April went</div>
+    <div class="section-p">Hermitage Hotel finished April with a composite rating of <strong>4.38/10</strong> across 5 connected platforms. The Buildd RM team replied to 47 reviews this month, including 14 that required your GM's personal attention. Cleanliness remains the single largest driver of negative reviews, accounting for 22% of complaints. Below: the four numbers you need to know.</div>
+    
+    <div class="exec-grid">
+      <div class="exec-card">
+        <div class="exec-num amber">4.38<small>/10</small></div>
+        <div class="exec-lbl">Composite Rating</div>
+        <div class="exec-sub">↑ +0.14 vs March</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-num green">100<small>%</small></div>
+        <div class="exec-lbl">Reply Rate</div>
+        <div class="exec-sub">↑ from 32% pre-Buildd</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-num">47</div>
+        <div class="exec-lbl">Reviews Handled</div>
+        <div class="exec-sub">33 RM · 14 GM</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-num green">$22.4K</div>
+        <div class="exec-lbl">Revenue Protected</div>
+        <div class="exec-sub">vs. unmanaged baseline</div>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- PLATFORM PERFORMANCE -->
+    <div class="section-mark">SECTION 02 · PLATFORM PERFORMANCE</div>
+    <div class="section-h">Where guests left feedback</div>
+    <div class="section-p">Per-platform breakdown showing where your guests are reviewing you and how each channel is performing. Booking and Expedia continue to drive the majority of review volume; Google remains under-served (action needed).</div>
+    
+    <div class="plat-grid">
+      <div class="plat-block">
+        <div class="plat-block-info">
+          <span class="platform-pill"><span class="platform-dot pdot-booking"></span>Booking</span>
+          <div><div class="plat-block-meta">319 reviews · 63% reply rate</div></div>
+        </div>
+        <div class="plat-block-rating" style="color:var(--amber)">3.82<small>/10</small></div>
+      </div>
+      <div class="plat-block">
+        <div class="plat-block-info">
+          <span class="platform-pill"><span class="platform-dot pdot-expedia"></span>Expedia</span>
+          <div><div class="plat-block-meta">118 reviews · 100% reply rate this month</div></div>
+        </div>
+        <div class="plat-block-rating" style="color:var(--red)">5.29<small>/10</small></div>
+      </div>
+      <div class="plat-block">
+        <div class="plat-block-info">
+          <span class="platform-pill"><span class="platform-dot pdot-hotels"></span>Hotels.com</span>
+          <div><div class="plat-block-meta">108 reviews · 100% reply rate this month</div></div>
+        </div>
+        <div class="plat-block-rating" style="color:var(--red)">5.09<small>/10</small></div>
+      </div>
+      <div class="plat-block">
+        <div class="plat-block-info">
+          <span class="platform-pill"><span class="platform-dot pdot-google"></span>Google</span>
+          <div><div class="plat-block-meta">Not yet connected · action needed</div></div>
+        </div>
+        <div class="plat-block-rating" style="color:var(--text-faint)">—</div>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- GM SCORECARD -->
+    <div class="section-mark">SECTION 03 · GM PERFORMANCE SCORECARD</div>
+    <div class="section-h">How your GM is performing</div>
+    <div class="section-p">The GM Score evaluates how well your manager handles the reviews escalated to them. ~70% weight is response time on flagged reviews; ~30% is reply quality (AI-judged on tone, addressing the complaint, and concrete action). This is what you should be evaluating your GM on.</div>
+    
+    <div class="gm-scorecard">
+      <div class="gms-top">
+        <div class="gms-num-box">
+          <div class="gms-num">385<small>/1000</small></div>
+          <div class="gms-num-lbl">GM Score</div>
+        </div>
+        <div>
+          <div class="gms-grade">Needs major intervention</div>
+          <div class="gms-desc">Your GM is taking an average of 18 hours to respond to flagged reviews. Best practice is &lt;4 hours. Reply quality is mid-tier — AI-judged 6.2/10 on tone, defensiveness, and concrete actions. Coaching opportunity.</div>
+        </div>
+        <div class="gms-rank">
+          <div class="gms-rank-num">#11</div>
+          <div class="gms-rank-lbl">of 11 GMs</div>
+        </div>
+      </div>
+      
+      <div class="gms-breakdown">
+        <div class="gms-bd">
+          <div class="gms-bd-lbl">Response Time · 70% weight</div>
+          <div class="gms-bd-num">112<small style="font-size:11px;color:var(--text-faint)">/700</small></div>
+          <div class="gms-bd-meta">Avg 18 hrs · target &lt;4 hrs</div>
+        </div>
+        <div class="gms-bd">
+          <div class="gms-bd-lbl">Reply Quality · 30% weight</div>
+          <div class="gms-bd-num">98<small style="font-size:11px;color:var(--text-faint)">/300</small></div>
+          <div class="gms-bd-meta">AI-judged 6.2/10 avg</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- GUEST INSIGHTS -->
+    <div class="section-mark">SECTION 04 · GUEST INSIGHTS</div>
+    <div class="section-h">What guests are talking about</div>
+    <div class="section-p">Top themes in negative reviews this month. These are the recurring patterns across platforms — the things your guests notice repeatedly. Each is backed by direct guest quotes.</div>
+    
+    <div class="theme-list">
+      <div class="theme-item">
+        <div class="theme-item-n">116</div>
+        <div class="theme-item-info">
+          <div class="theme-item-name">Cleanliness</div>
+          <div class="theme-item-quote">"Stained mattress, hair in the bathroom, sticky surfaces. Not worth the price." — Cheryl D., Booking</div>
+        </div>
+      </div>
+      <div class="theme-item">
+        <div class="theme-item-n">70</div>
+        <div class="theme-item-info">
+          <div class="theme-item-name">Bathroom</div>
+          <div class="theme-item-quote">"Bathroom door handle broke in my hand. The shower curtain fell on me." — Multiple guests, Booking + Expedia</div>
+        </div>
+      </div>
+      <div class="theme-item">
+        <div class="theme-item-n">62</div>
+        <div class="theme-item-info">
+          <div class="theme-item-name">Staff</div>
+          <div class="theme-item-quote">"The young lady at front desk was so sweet" / "Front desk was extremely rude" — Inconsistent across reviews. Coaching opportunity.</div>
+        </div>
+      </div>
+      <div class="theme-item">
+        <div class="theme-item-n">62</div>
+        <div class="theme-item-info">
+          <div class="theme-item-name">Bedding</div>
+          <div class="theme-item-quote">"Burn holes in the sheets, makeup stains on pillowcase." — Sarah K., Booking</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- ACTIONS -->
+    <div class="section-mark">SECTION 05 · RECOMMENDED ACTIONS</div>
+    <div class="section-h">What to do next month</div>
+    <div class="section-p">Prioritized actions for May, sized by impact and cost. We've estimated each action's projected ROI based on the rating lift it would deliver and the resulting OTA ranking + conversion improvement.</div>
+    
+    <div class="action-list">
+      <div class="action-item">
+        <div class="action-priority p1">P1</div>
+        <div class="action-body">
+          <div class="action-h">Deep-clean audit + 60-day inspection program</div>
+          <div class="action-d">Cleanliness is the #1 issue across all platforms (116 mentions). Recommend: hire 3rd-party inspector for weekly audits, retrain housekeeping with checklist, public-facing rooms first.</div>
+          <div class="action-meta">
+            <span>Cost: <b>$2,400/mo</b></span>
+            <span>Projected lift: <b>+0.8 stars</b></span>
+            <span>ROI: <b>~$22K/mo</b></span>
+            <span>Payback: <b>5 weeks</b></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-item">
+        <div class="action-priority p1">P1</div>
+        <div class="action-body">
+          <div class="action-h">Mattress + sheet replacement program</div>
+          <div class="action-d">62 bedding complaints. Multiple guests cite stained mattresses and burn holes in sheets. Replace mattresses for 20 worst rooms first, full linens refresh property-wide.</div>
+          <div class="action-meta">
+            <span>Cost: <b>~$14K capex</b></span>
+            <span>Projected lift: <b>+0.4 stars</b></span>
+            <span>ROI: <b>~$11K/mo</b></span>
+            <span>Payback: <b>16 weeks</b></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-item">
+        <div class="action-priority p2">P2</div>
+        <div class="action-body">
+          <div class="action-h">Connect Google My Business</div>
+          <div class="action-d">Google reviews are not currently flowing into PulsePilot. We're missing ~75 reviews/quarter that Buildd could be responding to. Quick win: connect the GMB account this week.</div>
+          <div class="action-meta">
+            <span>Cost: <b>$0 (15 min setup)</b></span>
+            <span>Projected lift: <b>+0.3 stars</b></span>
+            <span>ROI: <b>~$6K/mo</b></span>
+            <span>Payback: <b>Immediate</b></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-item">
+        <div class="action-priority p3">P3</div>
+        <div class="action-body">
+          <div class="action-h">GM coaching on response time</div>
+          <div class="action-d">Your GM is averaging 18 hours to reply to flagged reviews. Target is &lt;4 hours. Suggest: set up phone notifications for PulsePilot magic-link emails, define daily 9am review block.</div>
+          <div class="action-meta">
+            <span>Cost: <b>$0</b></span>
+            <span>GM Score impact: <b>+150 pts</b></span>
+            <span>Bonus tier unlock: <b>$1,200/qtr</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <div class="rf-grid">
+      <div class="rf-brand-line">
+        Generated by <span class="pp-brand">PulsePilot</span> for Hermitage Hotel<br>
+        Buildd From Ideas · <a href="#">buildfromideas.com</a> · Reputation × Revenue Intelligence<br>
+        Questions? Reply to this email or contact your Buildd account manager.
+      </div>
+      <div style="font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;text-align:right;line-height:1.7">
+        Report ID: PP-HER-2026-04<br>
+        Generated: May 13, 2026<br>
+        Page 1 of 1
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+</body></html>
