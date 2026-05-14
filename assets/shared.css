@@ -1,0 +1,89 @@
+/* PULSEPILOT™ INTERNAL TOOL — Shared Design System */
+
+:root{
+  --bg:#FAFBFC; --s1:#FFFFFF; --s2:#F4F6FA; --s3:#EBEFF5;
+  --border:#E4E8EF; --border-strong:#CBD2DC;
+  --text:#0A1628; --text-mute:#52617A; --text-faint:#8895AB;
+  --cyan:#06B894; --cyan-bright:#06D9B0;
+  --violet:#6D54E0; --violet-bright:#7B61FF;
+  --green:#059669; --amber:#D97706; --red:#DC2626; --blue:#2563EB;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+.pp-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-style:italic;background:linear-gradient(135deg,var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.3px;position:relative;padding-right:9px;display:inline-block}
+.pp-brand::after{content:'™';position:absolute;top:0;right:0;font-size:0.55em;color:var(--violet);-webkit-text-fill-color:var(--violet);font-style:normal;line-height:1}
+
+.nav{padding:14px 32px;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,0.94);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;backdrop-filter:blur(12px)}
+.nav-brand{font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.5px;display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(--cyan-bright),var(--violet-bright));border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800}
+.nav-product{font-size:11px;color:var(--text-mute);padding-left:14px;border-left:1px solid var(--border);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.nav-internal-tag{background:var(--text);color:#fff;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.8px}
+.nav a{color:var(--text-mute);text-decoration:none;font-size:12px;font-weight:500;transition:color .15s}
+.nav a:hover,.nav a.active{color:var(--text)}
+.nav-links{margin-left:auto;display:flex;gap:18px;align-items:center}
+.nav-user{padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--text);font-family:'JetBrains Mono',monospace;background:var(--s1)}
+
+.breadcrumb{padding:14px 32px 0;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-mute);font-family:'JetBrains Mono',monospace}
+.breadcrumb a{color:var(--text-mute);text-decoration:none;transition:color .15s}
+.breadcrumb a:hover{color:var(--text)}
+.breadcrumb .sep{color:var(--text-faint)}
+.breadcrumb .current{color:var(--text);font-weight:600}
+
+.page-header{padding:18px 32px 14px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.page-title{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-0.6px;margin-bottom:4px}
+.page-subtitle{font-size:12px;color:var(--text-mute);font-family:'JetBrains Mono',monospace}
+.page-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.btn{padding:9px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--s1);color:var(--text);transition:all .15s;font-family:'Space Grotesk',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--text);background:var(--s2)}
+.btn-primary{background:linear-gradient(135deg,var(--cyan-bright),var(--cyan));color:#fff;border-color:transparent;font-weight:700}
+.btn-primary:hover{box-shadow:0 4px 14px rgba(6,184,148,0.3);transform:translateY(-1px);color:#fff}
+.btn-violet{background:linear-gradient(135deg,var(--violet-bright),var(--violet));color:#fff;border-color:transparent;font-weight:700}
+.btn-violet:hover{box-shadow:0 4px 14px rgba(109,84,224,0.3);transform:translateY(-1px);color:#fff}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-ghost{background:transparent}
+
+.tag{font-size:9px;padding:3px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;display:inline-block}
+.tag-cyan{background:#D1FAE5;color:var(--cyan)}
+.tag-blue{background:#DBEAFE;color:var(--blue)}
+.tag-amber{background:#FEF3C7;color:var(--amber)}
+.tag-red{background:#FEE2E2;color:var(--red)}
+.tag-violet{background:#EDE9FE;color:var(--violet)}
+.tag-green{background:#D1FAE5;color:var(--green)}
+.tag-gray{background:var(--s2);color:var(--text-mute)}
+
+.platform-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;text-transform:uppercase;color:var(--text);background:var(--s1)}
+.platform-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.pdot-booking{background:#003580}
+.pdot-google{background:#4285F4}
+.pdot-expedia{background:#FFC72C}
+.pdot-hotels{background:#D32F2F}
+.pdot-agoda{background:#FF6B00}
+.pdot-priceline{background:#003D7C}
+.pdot-tripadvisor{background:#00AF87}
+.pdot-orbitz{background:#7E57C2}
+.pdot-travelocity{background:#1A237E}
+.pdot-cheaptickets{background:#FF9800}
+
+.section-hdr{padding:18px 32px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.section-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px;letter-spacing:-0.2px}
+.section-title::before{content:'';width:3px;height:14px;background:var(--cyan);border-radius:2px}
+.section-meta{font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px}
+
+.live-pulse{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--cyan);font-family:'JetBrains Mono',monospace;letter-spacing:0.8px;font-weight:600}
+.live-pulse::before{content:'';width:6px;height:6px;background:var(--cyan-bright);border-radius:50%;box-shadow:0 0 10px var(--cyan-bright);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.footer{padding:24px 32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;margin-top:32px;flex-wrap:wrap;gap:10px}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:10px;font-size:12px;font-weight:600;z-index:500;box-shadow:0 8px 24px rgba(10,22,40,0.3);display:none;animation:toastIn 0.3s ease-out}
+.toast.show{display:flex;align-items:center;gap:10px}
+.toast-icon{width:24px;height:24px;background:var(--cyan);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#001a14}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media (max-width:900px){
+  .nav,.breadcrumb,.page-header,.section-hdr,.footer{padding-left:18px;padding-right:18px}
+  .nav-product{display:none}
+}
